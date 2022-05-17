@@ -1,2 +1,26 @@
 *.class
 *.log
+
+# sbt specific
+.cache
+.history
+.bsp/
+.lib/
+dist/*
+target/
+codegen/
+lib_managed/
+src_managed/
+project/boot/
+project/plugins/project/
+
+# IntelliJ
+.idea/
+.DS_Store
+/.scannerwork/
+
+# VSCode + Metals
+.bloop
+.metals
+.vscode
+metals.sbt
