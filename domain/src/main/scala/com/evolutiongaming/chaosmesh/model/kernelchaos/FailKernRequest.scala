@@ -1,7 +1,7 @@
 package com.evolutiongaming.chaosmesh.model.kernelchaos
 
 import cats.ApplicativeThrow
-import cats.data.NonEmptySet
+import cats.data.NonEmptyList
 import cats.syntax.all._
 
 import scala.util.control.NoStackTrace
@@ -18,8 +18,8 @@ import scala.util.control.NoStackTrace
   */
 final case class FailKernRequest(
   failtype:    FailKernRequest.FailType,
-  callchain:   Option[NonEmptySet[FailKernRequest.Callchain]],
-  headers:     Option[NonEmptySet[String]],
+  callchain:   Option[NonEmptyList[FailKernRequest.Callchain]],
+  headers:     Option[NonEmptyList[String]],
   probability: Int,
   times:       Int,
 )
