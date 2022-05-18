@@ -8,10 +8,6 @@ import com.evolutiongaming.chaosmesh.model.spec._
 
 import scala.concurrent.duration.FiniteDuration
 
-/**
-  * Simulate a scenario of file system fault
-  *
-  */
 final case class IoChaos(
   metadata: ResourceMetadata,
   spec:     IoChaos.Spec,
@@ -21,21 +17,22 @@ final case class IoChaos(
 object IoChaos {
 
   /**
-      *
-      * @param action - Indicates the specific fault type.
-      * See [[com.evolutiongaming.chaosmesh.model.spec.Action.IoChaos]] subtypes
-      * @param mode - Specifies the mode of the experiment
-      * @param selector - Specifies the target Pod
-      * @param volumePath - The mount point of volume in the target container.
-      * Must be the root directory of the mount.
-      * @param path - The valid range of fault injections,
-      * either a wildcard or a single file.
-      * @param methods - Type of the file system call that requires injecting fault
-      * https://chaos-mesh.org/docs/simulate-io-chaos-on-kubernetes/#appendix-a-methods-type
-      * @param percent - Probability of failure per operation, in % 0..100
-      * @param containerName - Specifies the name of the container into which the fault is injected
-      * @param duration - Specifies the duration of the experiment
-      */
+    *  Simulate a scenario of file system fault
+    * 
+    * @param action - Indicates the specific fault type.
+    * See [[com.evolutiongaming.chaosmesh.model.spec.Action.IoChaos]] subtypes
+    * @param mode - Specifies the mode of the experiment
+    * @param selector - Specifies the target Pod
+    * @param volumePath - The mount point of volume in the target container.
+    * Must be the root directory of the mount.
+    * @param path - The valid range of fault injections,
+    * either a wildcard or a single file.
+    * @param methods - Type of the file system call that requires injecting fault
+    * https://chaos-mesh.org/docs/simulate-io-chaos-on-kubernetes/#appendix-a-methods-type
+    * @param percent - Probability of failure per operation, in % 0..100
+    * @param containerName - Specifies the name of the container into which the fault is injected
+    * @param duration - Specifies the duration of the experiment
+    */
   final case class Spec(
     action:        Action.IoChaos,
     mode:          Mode,

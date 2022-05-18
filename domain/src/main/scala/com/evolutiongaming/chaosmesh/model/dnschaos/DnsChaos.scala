@@ -14,7 +14,8 @@ final case class DnsChaos(
 object DnsChaos {
 
   /**
-    *
+    * Simulate wrong DNS responses
+    * 
     * @param action - Indicates the specific fault type.
     * See [[com.evolutiongaming.chaosmesh.model.spec.Action.DnsChaos]] subtypes
     * @param mode - Specifies the mode of the experiment

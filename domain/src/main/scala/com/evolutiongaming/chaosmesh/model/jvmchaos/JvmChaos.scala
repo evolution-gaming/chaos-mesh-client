@@ -14,7 +14,9 @@ final case class JvmChaos(
 object JvmChaos {
 
   /**
-    *
+    * Simulates the faults of JVM application through Byteman
+    * see https://github.com/chaos-mesh/byteman
+    * 
     * @param action - Indicates the specific fault type
     * See [[com.evolutiongaming.chaosmesh.model.spec.Action.JvmChaos]] subtypes
     * @param mode - Specifies the mode of the experiment

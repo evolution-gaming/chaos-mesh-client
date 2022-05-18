@@ -46,9 +46,9 @@ object TimeChaos {
       copy(containerNames = NonEmptyList.fromFoldable(names))
 
     /**
-       * Specifies the ID of clock that will be offset. See https://man7.org/linux/man-pages/man2/clock_gettime.2.html
-       *
-       */
+      * Specifies the ID of clock that will be offset. See https://man7.org/linux/man-pages/man2/clock_gettime.2.html
+      *
+      */
     def withTargetClockIds(first: String, rest: String*) =
       copy(clockIds = NonEmptyList.of(first, rest: _*))
   }

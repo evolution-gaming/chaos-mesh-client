@@ -8,7 +8,7 @@ import cats.data.NonEmptyList
 
 /**
   * NetworkChaos is a fault type in Chaos Mesh.
-  * By creating a NetworkChaos experiment, you can simulate a network fault scenario for a cluster
+  * By creating a NetworkChaos experiment, you can 
   */
 final case class NetChaos(
   metadata: ResourceMetadata,
@@ -19,16 +19,17 @@ final case class NetChaos(
 object NetChaos {
 
   /**
-     * 
-     * @param action - Indicates the specific fault type.
-     * See [[com.evolutiongaming.chaosmesh.model.spec.Action.NetChaos]] subtypes
-     * @param mode - Specifies the mode of the experiment
-     * @param direction - Indicates the direction.
-     * Default value emulates direction from all selector targets to any other target
-     * @param selector - Specifies the target Pod
-     * @param containerNames - Specifies the name of the container into which the fault is injected
-     * @param device - Specifies the target network interface
-     */
+    * Simulate a network fault scenario for a cluster
+    * 
+    * @param action - Indicates the specific fault type.
+    * See [[com.evolutiongaming.chaosmesh.model.spec.Action.NetChaos]] subtypes
+    * @param mode - Specifies the mode of the experiment
+    * @param direction - Indicates the direction.
+    * Default value emulates direction from all selector targets to any other target
+    * @param selector - Specifies the target Pod
+    * @param containerNames - Specifies the name of the container into which the fault is injected
+    * @param device - Specifies the target network interface
+    */
   final case class Spec(
     action:         Action.NetChaos,
     mode:           Mode,

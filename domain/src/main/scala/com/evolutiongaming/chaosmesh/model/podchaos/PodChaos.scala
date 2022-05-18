@@ -15,7 +15,8 @@ final case class PodChaos(
 object PodChaos {
 
   /**
-    *
+    * Simulate fault scenarios of the specified Pods or containers
+    * 
     * @param action - Indicates the specific fault type
     * See [[com.evolutiongaming.chaosmesh.model.spec.Action.PodChaos]] subtypes
     * @param mode - Specifies the mode of the experiment
