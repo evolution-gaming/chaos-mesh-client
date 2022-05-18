@@ -5,9 +5,9 @@ import cats.data.NonEmptyList
 trait Direction
 
 object Direction {
-  
+
   final case class To(
-    target: Option[Target],
+    target:          Option[Target],
     externalTargets: Option[NonEmptyList[String]],
   ) extends Direction {
 
@@ -20,12 +20,12 @@ object Direction {
 
   }
 
-  final case class  From(
-    target: Target
+  final case class From(
+    target: Target,
   ) extends Direction
 
   final case class Both(
-    target: Target
+    target: Target,
   ) extends Direction
 
   final case class Target(mode: Mode, selector: Selectors[Selectors.Filled])

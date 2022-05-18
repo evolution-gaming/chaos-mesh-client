@@ -3,6 +3,7 @@ package com.evolutiongaming.chaosmesh.model.k8s
 import cats.ApplicativeThrow
 import cats.syntax.all._
 import scala.util.control.NoStackTrace
+
 /**
   * see https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-phase
   */
@@ -22,8 +23,11 @@ object PodPhase {
     case "succeeds" => Succeeds.pure.widen
     case "failed"   => Failed.pure.widen
     case "unknown"  => Unknown.pure.widen
-    case other      => PodPhaseTypeIsNotDefined(s"Pod phase $other doesn't have corresponding type").raiseError
+    case other =>
+      PodPhaseTypeIsNotDefined(s"Pod phase $other doesn't have corresponding type").raiseError
   }
 
-  final case class PodPhaseTypeIsNotDefined(msg: String) extends RuntimeException(msg) with NoStackTrace
+  final case class PodPhaseTypeIsNotDefined(msg: String)
+      extends RuntimeException(msg)
+      with NoStackTrace
 }

@@ -11,7 +11,7 @@ import Selectors._
   * If multiple selectors are specified at the same time,
   * the current experiment target must meet the rules of all specified selectors at the same time.
   */
-final case class Selectors[State <: Selectors.State] private(
+final case class Selectors[State <: Selectors.State] private (
   namespaces:          Option[NonEmptySet[String]],
   labelSelectors:      Option[NonEmptyMap[String, String]],
   expressionSelectors: Option[NonEmptyList[Expression]],

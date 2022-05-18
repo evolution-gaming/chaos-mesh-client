@@ -34,6 +34,8 @@ object ExperimentKind {
     case other          => UnknownExperimentType(s"Experiment type $other is unknown").raiseError
   }
 
-  final case class UnknownExperimentType(msg: String) extends RuntimeException(msg) with NoStackTrace
+  final case class UnknownExperimentType(msg: String)
+      extends RuntimeException(msg)
+      with NoStackTrace
 
 }

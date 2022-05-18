@@ -289,6 +289,8 @@ object Action {
       exception: String,
     ) extends JvmChaos
 
+    sealed trait Stress extends JvmChaos
+
     /**
       * Increase CPU usage of Java process
       *
@@ -298,7 +300,7 @@ object Action {
       */
     final case class CpuStress(
       cpuCount: Int,
-    ) extends JvmChaos
+    ) extends Stress
 
     /**
       * Cause memory overflow (support heap overflow and stack overflow)
@@ -307,7 +309,7 @@ object Action {
       */
     final case class MemOverflow(
       memType: String,
-    ) extends JvmChaos
+    ) extends Stress
 
     /**
       * Trigger garbage collection

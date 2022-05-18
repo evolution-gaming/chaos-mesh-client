@@ -5,6 +5,7 @@ import cats.data.NonEmptySet
 import cats.syntax.all._
 
 import scala.util.control.NoStackTrace
+
 /**
   * Specifies the fault mode (such as kmallo and bio).
   * It also specifies a specific call chain path and the optional filtering conditions
@@ -47,8 +48,8 @@ object FailKernRequest {
     * see https://chaos-mesh.org/docs/simulate-kernel-chaos-on-kubernetes
     */
   final case class Callchain(
-      funcname: String,
-      parametes: Option[String],
-      predicate: Option[String]
+    funcname:  String,
+    parametes: Option[String],
+    predicate: Option[String],
   )
 }

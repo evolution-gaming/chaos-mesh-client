@@ -221,6 +221,8 @@ object HttpChaos {
     queries: Option[NonEmptyList[NonEmptyList[String]]] = None,
   )
 
-  final case class UnknownHttpChaosTarget(msg: String) extends RuntimeException(msg) with NoStackTrace
+  final case class UnknownHttpChaosTarget(msg: String)
+      extends RuntimeException(msg)
+      with NoStackTrace
 
 }
