@@ -3,13 +3,13 @@ package com.evolutiongaming.chaosmesh.circe.httpchaos
 import cats.syntax.all._
 import com.evolutiongaming.chaosmesh.circe.common.CirceOps._
 import com.evolutiongaming.chaosmesh.circe.common._
+import com.evolutiongaming.chaosmesh.circe.k8s._
 import com.evolutiongaming.chaosmesh.circe.spec._
 import com.evolutiongaming.chaosmesh.model.httpchaos.HttpChaos
+import com.evolutiongaming.chaosmesh.model.k8s.ExperimentKind
 import io.circe._
 import io.circe.generic.semiauto._
 import io.circe.syntax._
-import com.evolutiongaming.chaosmesh.circe.k8s._
-import com.evolutiongaming.chaosmesh.model.k8s.ExperimentKind
 
 trait HttpChaosInstances
     extends ModeInstances

@@ -20,7 +20,7 @@ trait ModeInstances {
       for {
         modeField  <- c.get[String](ModeField).toTry
         valueField <- c.get[Option[String]](ModeValueField).toTry
-        value = valueField.flatMap(_.toIntOption)
+        value = valueField.flatMap(v => Try(v.toInt).toOption)
         mode <- Mode.from[Try](modeField, value)
       } yield mode
     }

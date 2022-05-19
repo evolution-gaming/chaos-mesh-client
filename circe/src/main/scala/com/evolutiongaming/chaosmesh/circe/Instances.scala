@@ -13,7 +13,7 @@ import com.evolutiongaming.chaosmesh.circe.podchaos._
 import com.evolutiongaming.chaosmesh.circe.stresschaos._
 import com.evolutiongaming.chaosmesh.circe.timechaos._
 
-package object circe
+object Instances
     extends CustomResourceInstances
     with PodChaosInstances
     with NetworkChaosInstances

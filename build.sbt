@@ -8,19 +8,25 @@ inThisBuild(
     organizationHomepage := Some(url("http://evolution.com")),
     startYear            := Some(2022),
     licenses             := Seq(("MIT", url("https://opensource.org/licenses/MIT"))),
-    crossScalaVersions   := Seq("2.13.8", "2.12.15"),
+    crossScalaVersions   := Seq("2.12.15", "2.13.8", "3.0.1"),
     versionScheme        := Some("semver-spec"),
     scalaVersion         := crossScalaVersions.value.head,
     publishTo            := Some(Resolver.evolutionReleases),
-    addCompilerPlugin(Compiler.KindProjector),
-    addCompilerPlugin(Compiler.BetterMonadicFor),
+    scalacOptions ++= {
+      CrossVersion.partialVersion(scalaVersion.value) match {
+        case Some((3, _)) => Seq.empty
+        case _ =>
+          Seq(
+            "-Wconf:cat=other-match-analysis:error",
+          )
+      }
+    },
   ),
 )
 
 lazy val commonSettings = Seq(
   releaseCrossBuild    := true,
   scalacOptsFailOnWarn := Some(false),
-  scalacOptions += "-Wconf:cat=other-match-analysis:error",
   testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
   libraryDependencies ++= Seq(
     Testing.WeaverCats,
@@ -59,7 +65,7 @@ lazy val circe = project
       Circe.Core,
       Circe.Generic,
       Circe.Parser % Test,
-      Circe.Yaml % Test,
+      Circe.Yaml   % Test,
     ),
   )
 
