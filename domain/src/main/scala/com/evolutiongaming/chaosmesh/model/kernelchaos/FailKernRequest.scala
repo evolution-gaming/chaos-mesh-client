@@ -48,8 +48,8 @@ object FailKernRequest {
     * see https://chaos-mesh.org/docs/simulate-kernel-chaos-on-kubernetes
     */
   final case class Callchain(
-    funcname:  String,
-    parametes: Option[String],
-    predicate: Option[String],
+    funcname:   String,
+    parameters: Option[String],
+    predicate:  Option[String],
   )
 }
