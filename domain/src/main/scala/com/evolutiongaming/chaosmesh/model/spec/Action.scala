@@ -37,6 +37,15 @@ object Action {
     ) extends PodChaos
         with Attributes.HasTargetContainers[Id]
 
+    object ContainerKill {
+      /**
+        * Specifies target container names
+        *
+        */
+      def apply(first: String, rest: String*): ContainerKill =
+        ContainerKill(NonEmptyList.of(first, rest: _*))
+    }
+
   }
 
   sealed trait NetChaos extends Action
