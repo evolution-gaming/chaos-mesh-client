@@ -143,7 +143,8 @@ object Action {
   object IoChaos {
 
     /**
-      *
+      * Simulating delays file system calls
+      * 
       * @param delay - Specific delay time
       */
     final case class Latency(
@@ -151,6 +152,7 @@ object Action {
     ) extends IoChaos
 
     /**
+      * Filesystem calls returns an error
       *
       * @param errno - Returned error number
       * see https://chaos-mesh.org/docs/simulate-io-chaos-on-kubernetes/#appendix-b-common-error-numbers
@@ -160,6 +162,7 @@ object Action {
     ) extends IoChaos
 
     /**
+      * Modifies file properties
       *
       * @param attr - Specific property override rules
       */
@@ -168,7 +171,8 @@ object Action {
     ) extends IoChaos
 
     /**
-      *
+      * Contains file properties override rules
+      * 
       * @param ino - ino number
       * @param size - File size
       * @param blocks - Number of blocks that the file uses
@@ -198,7 +202,8 @@ object Action {
     )
 
     /**
-      *
+      * Contains time data for file properties override
+      * 
       * @param sec - timestamp in seconds
       * @param nsec - timestamp in nanoseconds
       * For the specific meaning of parameters, you can refer to man stat
@@ -209,7 +214,8 @@ object Action {
     )
 
     /**
-      *
+      * Makes the file read or write a wrong value
+      * 
       * @param mistake - Specific error rules
       */
     final case class Mistake(
@@ -217,7 +223,8 @@ object Action {
     ) extends IoChaos
 
     /**
-      *
+      * Specifies read or write mistake rules
+      * 
       * @param filling - The wrong data to be filled. Only zero (fill 0) or random (fill random bytes) are supported
       * @param maxOccurrences - Maximum number of errors in each operation
       * @param maxLength - Maximum length of each error (in bytes)
@@ -296,8 +303,6 @@ object Action {
       * Increase CPU usage of Java process
       *
       * @param cpuCount - The number of CPU cores used for increasing CPU stress
-      * @param memType - The type of OOM. Currently, both 'stack' and 'heap' OOM types are supported
-
       */
     final case class CpuStress(
       cpuCount: Int,
