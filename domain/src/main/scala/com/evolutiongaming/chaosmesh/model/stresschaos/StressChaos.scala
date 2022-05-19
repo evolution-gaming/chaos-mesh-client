@@ -54,9 +54,16 @@ object StressChaos {
 
   }
 
+  /**
+    * Specifies the stress of CPU or memory
+    *
+    * @param memory - memory stress specification
+    * @param cpu - cpu stress specification
+    */
   final case class Stressors(memory: Option[MemoryStressor] = None, cpu: Option[CpuStressor] = None)
 
   /**
+    * Specifies the memory stress
     * 
     * @param workers - Specifies the number of threads that apply memory stress
     * @param size - Specifies the memory size to be occupied or a percentage of the total memory size.
@@ -65,13 +72,13 @@ object StressChaos {
   final case class MemoryStressor(workers: Int, size: Option[String])
 
   /**
-  * 
-  *
-  * @param workers - Specifies the number of threads that apply CPU stress	
-  * @param load - Specifies the percentage of CPU occupied.
-  * 0 means that no additional CPU is added, and 100 refers to full load.
-  * The final sum of CPU load is workers * load.
-  */
+    * Specifies the CPU stress
+    *
+    * @param workers - Specifies the number of threads that apply CPU stress	
+    * @param load - Specifies the percentage of CPU occupied.
+    * 0 means that no additional CPU is added, and 100 refers to full load.
+    * The final sum of CPU load is workers * load.
+    */
   final case class CpuStressor(workers: Int, load: Int)
 
 }
