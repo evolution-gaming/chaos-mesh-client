@@ -5,6 +5,7 @@ import cats.effect.kernel.Sync
 import com.evolutiongaming.chaosmesh.model.k8s._
 import com.evolutiongaming.chaosmesh.model.podchaos.PodChaos
 import com.evolutiongaming.chaosmesh.model.spec._
+import com.evolutiongaming.chaosmesh.circe.instances._
 import io.circe._
 import io.circe.syntax._
 import weaver._

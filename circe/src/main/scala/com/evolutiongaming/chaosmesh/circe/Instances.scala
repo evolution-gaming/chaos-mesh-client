@@ -1,4 +1,4 @@
-package com.evolutiongaming.chaosmesh
+package com.evolutiongaming.chaosmesh.circe
 
 import com.evolutiongaming.chaosmesh.circe.awschaos._
 import com.evolutiongaming.chaosmesh.circe.dnschaos._
@@ -13,7 +13,7 @@ import com.evolutiongaming.chaosmesh.circe.podchaos._
 import com.evolutiongaming.chaosmesh.circe.stresschaos._
 import com.evolutiongaming.chaosmesh.circe.timechaos._
 
-object Instances
+object instances
     extends CustomResourceInstances
     with PodChaosInstances
     with NetworkChaosInstances
