@@ -99,6 +99,7 @@ object Action {
       * @param latency - Indicates the network latency
       * @param correlation - Indicates the correlation between the current latency and the previous one 0..100
       * @param jitter - Indicates the range of the network latency
+      * @param reorder - Indicates packet reordering fault rules
       */
     final case class Delay(
       latency:     Option[FiniteDuration],
