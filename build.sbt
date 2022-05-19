@@ -8,7 +8,7 @@ inThisBuild(
     organizationHomepage := Some(url("http://evolution.com")),
     startYear            := Some(2022),
     licenses             := Seq(("MIT", url("https://opensource.org/licenses/MIT"))),
-    crossScalaVersions   := Seq("3.1.1", "2.13.8", "2.12.15"),
+    crossScalaVersions   := Seq("2.13.8", "2.12.15"),
     versionScheme        := Some("semver-spec"),
     scalaVersion         := crossScalaVersions.value.head,
     publishTo            := Some(Resolver.evolutionReleases),
@@ -58,6 +58,8 @@ lazy val circe = project
     libraryDependencies ++= Seq(
       Circe.Core,
       Circe.Generic,
+      Circe.Parser % Test,
+      Circe.Yaml % Test,
     ),
   )
 

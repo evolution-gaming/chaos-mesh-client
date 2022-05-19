@@ -2,8 +2,8 @@ import sbt._
 
 object Dependencies {
   object Compiler {
-    val KindProjector    = "org.typelevel" %% "kind-projector"     % "0.13.2" cross CrossVersion.full
-    val BetterMonadicFor = "com.olegpy"    %% "better-monadic-for" % "0.3.1"
+    val KindProjector = "org.typelevel" %% "kind-projector" % "0.13.2" cross CrossVersion.full
+    val BetterMonadicFor = "com.olegpy" %% "better-monadic-for" % "0.3.1"
   }
 
   object K8s {
@@ -20,6 +20,8 @@ object Dependencies {
     private val version = "0.14.1"
     val Core            = "io.circe" %% "circe-core"    % version
     val Generic         = "io.circe" %% "circe-generic" % version
+    val Parser          = "io.circe" %% "circe-parser"  % version
+    val Yaml            = "io.circe" %% "circe-yaml"    % version
   }
 
   object Testing {
