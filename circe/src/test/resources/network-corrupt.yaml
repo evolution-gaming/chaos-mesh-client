@@ -1,0 +1,14 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: network-corrupt-example
+spec:
+  action: corrupt
+  mode: one
+  selector:
+    labelSelectors:
+      "app.kubernetes.io/component": "tikv"
+  corrupt:
+    corrupt: "40"
+    correlation: "25"
+  duration: "10s"

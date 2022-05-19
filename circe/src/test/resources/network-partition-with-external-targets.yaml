@@ -1,0 +1,19 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: network-partition-example
+spec:
+  action: partition
+  mode: one
+  selector:
+    labelSelectors:
+      "app.kubernetes.io/component": "tikv"
+  direction: to
+  externalTargets:
+    - "8.8.8.8"
+    - "www.google.com"
+    - "8.8.0.0/16"
+    - "1.1.1.1:80"
+    - "example.com:443"
+    - "10.0.0.0/8:22"
+  duration: "10s"
