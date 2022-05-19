@@ -43,7 +43,7 @@ object TimeChaos {
       *
       */
     def withTargetContainers(names: String*) =
-      copy(containerNames = NonEmptyList.fromFoldable(names))
+      copy(containerNames = NonEmptyList.fromList(names.toList))
 
     /**
       * Specifies the ID of clock that will be offset. See https://man7.org/linux/man-pages/man2/clock_gettime.2.html

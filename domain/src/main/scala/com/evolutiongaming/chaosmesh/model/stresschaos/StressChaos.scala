@@ -50,7 +50,7 @@ object StressChaos {
       *
       */
     def withTargetContainers(names: String*) =
-      copy(containerNames = NonEmptyList.fromFoldable(names))
+      copy(containerNames = NonEmptyList.fromList(names.toList))
 
   }
 

@@ -43,7 +43,7 @@ object Expression {
 
     object Exists {
       def apply(values: String*): Exists =
-        Exists(NonEmptyList.fromFoldable(values))
+        Exists(NonEmptyList.fromList(values.toList))
     }
 
     final case class DoesNotExist(doesNotExist: Option[NonEmptyList[String]])
@@ -51,7 +51,7 @@ object Expression {
 
     object DoesNotExist {
       def apply(values: String*): DoesNotExist =
-        DoesNotExist(NonEmptyList.fromFoldable(values))
+        DoesNotExist(NonEmptyList.fromList(values.toList))
     }
 
     def from[F[_]: ApplicativeThrow](name: String, values: Values): F[Operator] =

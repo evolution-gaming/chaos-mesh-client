@@ -24,7 +24,7 @@ object Direction {
       *
       */
     def withExternalTargets(targets: String*) =
-      copy(externalTargets = NonEmptyList.fromFoldable(targets))
+      copy(externalTargets = NonEmptyList.fromList(targets.toList))
 
     /**
       * Making network chaos effective for outgoing traffic to specified targets

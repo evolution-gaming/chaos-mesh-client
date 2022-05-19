@@ -52,7 +52,7 @@ object NetChaos {
       *
       */
     def withTargetContainNames(names: String*) =
-      copy(containerNames = NonEmptyList.fromFoldable(names))
+      copy(containerNames = NonEmptyList.fromList(names.toList))
 
     /**
       * Specifies the target network interface

@@ -36,7 +36,7 @@ object DnsChaos {
       * 
       */
     def withTargetDomains(domains: String*): Spec =
-      copy(patterns = NonEmptyList.fromFoldable(domains))
+      copy(patterns = NonEmptyList.fromList(domains.toList))
 
   }
 }
