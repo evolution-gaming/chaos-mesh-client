@@ -6,10 +6,6 @@ import com.evolutiongaming.chaosmesh.model.spec.Attributes._
 import com.evolutiongaming.chaosmesh.model.spec._
 import cats.data.NonEmptyList
 
-/**
-  * NetworkChaos is a fault type in Chaos Mesh.
-  * By creating a NetworkChaos experiment, you can 
-  */
 final case class NetChaos(
   metadata: ResourceMetadata,
   spec:     NetChaos.Spec,
