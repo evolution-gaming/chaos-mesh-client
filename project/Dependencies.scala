@@ -1,10 +1,6 @@
 import sbt._
 
 object Dependencies {
-  object Compiler {
-    val KindProjector = "org.typelevel" %% "kind-projector" % "0.13.2" cross CrossVersion.full
-    val BetterMonadicFor = "com.olegpy" %% "better-monadic-for" % "0.3.1"
-  }
 
   object K8s {
     private val version  = "0.8.0"
