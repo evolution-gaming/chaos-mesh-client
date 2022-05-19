@@ -61,7 +61,7 @@ final case class Selectors[State <: Selectors.State] private (
     copy(fieldSelectors = NonEmptyMap.of(first, rest: _*).some)
 
   /**
-    * Specifies the namespaces and list of the experiment's target Pods
+    * Specifies target Pods by their phase
     * If you have specified this selector, Chaos Mesh will **ignore** other configured selectors
     */
   def byPodPhases(first: PodPhase, rest: PodPhase*): Selectors[Selectors.Filled] =
@@ -83,10 +83,10 @@ final case class Selectors[State <: Selectors.State] private (
     copy(nodes = NonEmptyList.of(first, rest: _*).some)
 
   /**
-     * Specifies the namespaces and list of the experiment's target Pods
+     * Specifies the namespaces and list of target Pods in each namespace
      * If you have specified this selector, Chaos Mesh will **ignore** other configured selectors.
      */
-  def byPodNames(pods: NonEmptyMap[String, NonEmptyList[String]]): Selectors[Selectors.Filled] =
+  def byPodNamesInNamespace(pods: NonEmptyMap[String, NonEmptyList[String]]): Selectors[Selectors.Filled] =
     copy(pods = pods.some)
 
 }
