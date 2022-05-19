@@ -25,28 +25,28 @@ object Expression {
 
     type Values = Option[NonEmptyList[String]]
 
-    case class In(in: NonEmptyList[String]) extends Operator("In", in.some)
+    final case class In(in: NonEmptyList[String]) extends Operator("In", in.some)
 
     object In {
       def apply(head: String, tail: String*): In =
         In(NonEmptyList.of(head, tail: _*))
     }
 
-    case class NotIn(notIn: NonEmptyList[String]) extends Operator("NotIn", notIn.some)
+    final case class NotIn(notIn: NonEmptyList[String]) extends Operator("NotIn", notIn.some)
 
     object NotIn {
       def apply(head: String, tail: String*): NotIn =
         NotIn(NonEmptyList.of(head, tail: _*))
     }
 
-    case class Exists(exists: Option[NonEmptyList[String]]) extends Operator("Exists", exists)
+    final case class Exists(exists: Option[NonEmptyList[String]]) extends Operator("Exists", exists)
 
     object Exists {
       def apply(values: String*): Exists =
         Exists(NonEmptyList.fromFoldable(values))
     }
 
-    case class DoesNotExist(doesNotExist: Option[NonEmptyList[String]])
+    final case class DoesNotExist(doesNotExist: Option[NonEmptyList[String]])
         extends Operator("DoesNotExist", doesNotExist)
 
     object DoesNotExist {
