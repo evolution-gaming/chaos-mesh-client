@@ -7,5 +7,5 @@ spec:
   selector:
     labelSelectors:
       "app.kubernetes.io/component": "tikv"
-  timeOffset: "10m"
+  timeOffset: "-10m100ns"
   duration: "30s"

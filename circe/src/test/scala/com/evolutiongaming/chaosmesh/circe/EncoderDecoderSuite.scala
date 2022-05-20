@@ -16,8 +16,10 @@ import com.evolutiongaming.chaosmesh.model.networkchaos.NetChaos
 import com.evolutiongaming.chaosmesh.model.httpchaos.HttpChaos
 import com.evolutiongaming.chaosmesh.model.iochaos.IoChaos
 import com.evolutiongaming.chaosmesh.model.dnschaos.DnsChaos
+import com.evolutiongaming.chaosmesh.circe.common.DurationInstances
+import com.evolutiongaming.chaosmesh.model.timechaos.TimeChaos
 
-object EncoderDecoderSuite extends SimpleIOSuite {
+object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
 
   val testPrinter = Printer.noSpacesSortKeys.copy(dropNullValues = true)
 
@@ -33,7 +35,7 @@ object EncoderDecoderSuite extends SimpleIOSuite {
       fileJson <- getJsonContent(s"/$filename")
       parsed   <- IO.fromEither(fileJson.as[Resource])
     } yield expect(parsed == expected)
-    test.handleError(_ => failure("exception happened on decoding"))
+    test.handleError(err => failure(s"exception happened on decoding $err"))
   }
 
   private def testEncoding[Spec: Encoder](
@@ -390,6 +392,35 @@ object EncoderDecoderSuite extends SimpleIOSuite {
       "dns-chaos.yaml",
       experiment,
     )
+  }
+
+  test("time chaos simple") {
+    val experiment =
+      TimeChaos(
+        metadata = ResourceMetadata(
+          name = "time-shift-example",
+        ),
+        spec = TimeChaos
+          .Spec(
+            mode = Mode.One,
+            selector = Selectors()
+              .withByLabels("app.kubernetes.io/component" -> "tikv"),
+            timeOffset = 10.minutes,
+            duration = 30.seconds,
+          ),
+      )
+    testEncodingDecoding[TimeChaos.Spec, TimeChaos](
+      "time-chaos.yaml",
+      experiment,
+    )
+  }
+
+  test("time chaos decode complex time offset") {
+    for {
+      fileJson <- getJsonContent("/time-chaos-complex-time.yaml")
+      parsed   <- IO.fromEither(fileJson.as[TimeChaos])
+      time = parsed.spec.timeOffset
+    } yield expect(time == -600000000100L.nanos)
   }
 
 }

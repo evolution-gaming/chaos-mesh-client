@@ -1,5 +1,6 @@
 package com.evolutiongaming.chaosmesh.model.timechaos
 
+import cats.syntax.all._
 import cats.data.NonEmptyList
 import com.evolutiongaming.chaosmesh.model.k8s._
 import com.evolutiongaming.chaosmesh.model.spec.Attributes._
@@ -11,7 +12,7 @@ final case class TimeChaos(
   metadata: ResourceMetadata,
   spec:     TimeChaos.Spec,
   kind:     ExperimentKind.TimeChaos.type = ExperimentKind.TimeChaos,
-)
+) extends CustomResource[TimeChaos.Spec, ExperimentKind.TimeChaos.type]
 
 object TimeChaos {
 
@@ -33,10 +34,12 @@ object TimeChaos {
     selector:       Selectors[Selectors.Filled],
     containerNames: Option[NonEmptyList[String]] = None,
     timeOffset:     FiniteDuration,
-    clockIds:       NonEmptyList[String] = NonEmptyList.one("CLOCK_REALTIME"),
+    duration:       FiniteDuration,
+    clockIds:       Option[NonEmptyList[String]] = None,
   ) extends HasMode
       with HasTargetContainers[Option]
-      with HasSelectors {
+      with HasSelectors
+      with HasDuration {
 
     /**
       * Specifies the name of the container into which the fault is injected
@@ -46,10 +49,11 @@ object TimeChaos {
       copy(containerNames = NonEmptyList.fromList(names.toList))
 
     /**
-      * Specifies the ID of clock that will be offset. See https://man7.org/linux/man-pages/man2/clock_gettime.2.html
+      * Specifies the ID of clock that will be offset.
+      * See https://man7.org/linux/man-pages/man2/clock_gettime.2.html
       *
       */
     def withTargetClockIds(first: String, rest: String*) =
-      copy(clockIds = NonEmptyList.of(first, rest: _*))
+      copy(clockIds = NonEmptyList.of(first, rest: _*).some)
   }
 }
