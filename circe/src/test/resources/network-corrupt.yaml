@@ -5,6 +5,7 @@ metadata:
 spec:
   action: corrupt
   mode: one
+  direction: to
   selector:
     labelSelectors:
       "app.kubernetes.io/component": "tikv"

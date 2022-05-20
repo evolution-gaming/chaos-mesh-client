@@ -58,7 +58,7 @@ object EncoderDecoderSuite extends SimpleIOSuite {
         filename = filename,
         toEncode = resource,
       )
-    } yield decoding && encoding
+    } yield encoding && decoding
 
   test("pod failure") {
     val podFailure =
@@ -142,42 +142,7 @@ object EncoderDecoderSuite extends SimpleIOSuite {
     )
   }
 
-  test("net delay") {
-    val experiment =
-      NetChaos(
-        metadata = ResourceMetadata(
-          name = "network-delay-example",
-        ),
-        spec = NetChaos.Spec(
-          action = Action.NetChaos
-            .Delay()
-            .withLatency(90.millis)
-            .withJitter(90.millis)
-            .withCorrelation(25),
-          direction = Direction
-            .From(
-              Direction.Target(
-                mode = Mode.All,
-                selector = Selectors()
-                  .withByNamespaces("db", "storage")
-                  .withByLabels("app.kubernetes.io/component" -> "pool"),
-              ),
-            )
-            .some,
-          mode = Mode.One,
-          duration = 10.seconds,
-          selector = Selectors()
-            .withByNamespaces("web")
-            .withByLabels("app.kubernetes.io/component" -> "web-app"),
-        ),
-      )
-    testEncodingDecoding[NetChaos.Spec, NetChaos](
-      "network-delay.yaml",
-      experiment,
-    )
-  }
-
-  test("net bandwith") {
+  test("net bandwidth") {
     val experiment =
       NetChaos(
         metadata = ResourceMetadata(
@@ -200,6 +165,56 @@ object EncoderDecoderSuite extends SimpleIOSuite {
       )
     testEncodingDecoding[NetChaos.Spec, NetChaos](
       "network-bandwidth.yaml",
+      experiment,
+    )
+  }
+
+  test("net loss") {
+    val experiment =
+      NetChaos(
+        metadata = ResourceMetadata(
+          name = "network-bandwidth-example",
+        ),
+        spec = NetChaos.Spec(
+          action = Action.NetChaos
+            .BandwidthLimit(
+              rate = 100000,
+              limit = 100,
+              buffer = 10000,
+            )
+            .withPeakRate(1000000)
+            .withPeakRateBucketSize(1000000),
+          mode = Mode.One,
+          duration = 10.seconds,
+          selector = Selectors()
+            .withByLabels("app.kubernetes.io/component" -> "tikv"),
+        ),
+      )
+    testEncodingDecoding[NetChaos.Spec, NetChaos](
+      "network-bandwidth.yaml",
+      experiment,
+    )
+  }
+
+  test("net corrupt") {
+    val experiment =
+      NetChaos(
+        metadata = ResourceMetadata(
+          name = "network-corrupt-example",
+        ),
+        spec = NetChaos.Spec(
+          action = Action.NetChaos
+            .PacketCorrupt()
+            .withCorrelation(25)
+            .withProbability(40),
+          mode = Mode.One,
+          duration = 10.seconds,
+          selector = Selectors()
+            .withByLabels("app.kubernetes.io/component" -> "tikv"),
+        ),
+      )
+    testEncodingDecoding[NetChaos.Spec, NetChaos](
+      "network-corrupt.yaml",
       experiment,
     )
   }

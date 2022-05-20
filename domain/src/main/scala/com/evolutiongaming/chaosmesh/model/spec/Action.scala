@@ -105,6 +105,15 @@ object Action {
         BandwidthLimit(BandwidthLimitRules(s"${rate}bps", limit, buffer))
     }
 
+    /**
+      * Indicates bandwidth limit rules
+      *
+      * @param rate - Indicates the rate of bandwidth limit in bytes per second
+      * @param limit - Indicates the number of bytes waiting in queue
+      * @param buffer - Indicates the maximum number of bytes that can be sent instantaneously
+      * @param peakrate - Indicates the maximum consumption of bucket
+      * @param minburst - Indicates the size of peakrate bucket
+      */
     final case class BandwidthLimitRules private[spec] (
       rate:     String,
       limit:    Long,
@@ -130,14 +139,42 @@ object Action {
       * Simulating package corruption fault
       * https://chaos-mesh.org/docs/simulate-network-chaos-on-kubernetes/#corrupt
       *
+      * @param corrupt - Indicates packet corrupt rules 
+      */
+    final case class PacketCorrupt(
+      corrupt: PacketCorruptRules = PacketCorruptRules(),
+    ) extends NetChaos {
+
+      /**
+        * Specifies the probability of packet corrupt. Should be 0..100
+        *
+        */
+      def withProbability(probability: Int) =
+        updateRules(_.copy(corrupt = probability.toString().some))
+
+      /**
+        * Specifies the correlation between the current corrupt and the previous one. Should be 0..100
+        *
+        */
+      def withCorrelation(correlation: Int) =
+        updateRules(_.copy(correlation = correlation.toString().some))
+
+      private def updateRules(f: PacketCorruptRules => PacketCorruptRules) =
+        copy(corrupt = f(corrupt))
+
+    }
+
+    /**
+      * Indicates packet corrupt rules
+      *
       * @param corrupt - Indicates the probability of packet corruption 0..100
       * @param correlation - Indicates the correlation between the probability
       * of current packet corruption and the previous time's packet corruption 0..100
       */
-    final case class PacketCorrupt(
-      corrupt:     Option[Int],
-      correlation: Option[Int],
-    ) extends NetChaos
+    final case class PacketCorruptRules private[spec] (
+      corrupt:     Option[String] = None,
+      correlation: Option[String] = None,
+    )
 
     /**
       * Simulating network delay fault
@@ -199,6 +236,14 @@ object Action {
 
     }
 
+    /**
+      * Indicates network delay fault
+      *
+      * @param latency - Indicates the network latency
+      * @param correlation - Indicates the correlation between the current latency and the previous one 0..100
+      * @param jitter - Indicates the range of the network latency
+      * @param reorder - Indicates packet reordering fault rules
+      */
     final case class DelayRules private[spec] (
       latency:     Option[FiniteDuration] = None,
       correlation: Option[String] = None,
@@ -206,6 +251,14 @@ object Action {
       reorder:     Option[PacketReorder] = None,
     )
 
+    /**
+      * Indicates network packet reordering fault
+      *
+      * @param reorder - Indicates the probability to reorder 0..100
+      * @param correlation - Indicates the correlation between this time's length of delay time
+      * and the previous time's length of delay time 0..100
+      * @param gap - Indicates the gap before and after packet reordering
+      */
     final case class PacketReorder private[spec] (
       reorder:     Option[String] = None,
       correlation: Option[String] = None,
