@@ -14,7 +14,7 @@ object Direction {
     * @param target - Specifies targets inside of Kubernetes cluster
     * @param externalTargets - Specifies targets by domain name
     */
-  final case class To private(
+  final case class To private[chaosmesh] (
     target:          Option[Target] = None,
     externalTargets: Option[NonEmptyList[String]] = None,
   ) extends Direction {

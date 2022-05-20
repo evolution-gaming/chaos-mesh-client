@@ -109,7 +109,7 @@ object Action {
       *
       * @param delay - Indicates delay rules
       */
-    final case class Delay private (
+    final case class Delay (
       delay: DelayRules = DelayRules(),
     ) extends NetChaos {
 
@@ -163,14 +163,14 @@ object Action {
 
     }
 
-    final private[chaosmesh] case class DelayRules private (
+    final private[chaosmesh] case class DelayRules private[spec](
       latency:     Option[FiniteDuration] = None,
       correlation: Option[String] = None,
       jitter:      Option[FiniteDuration] = None,
       reorder:     Option[PacketReorder] = None,
     )
 
-    final private[chaosmesh] case class PacketReorder private (
+    final private[chaosmesh] case class PacketReorder private[spec] (
       reorder:     Option[String] = None,
       correlation: Option[String] = None,
       gap:         Option[Int] = None,
