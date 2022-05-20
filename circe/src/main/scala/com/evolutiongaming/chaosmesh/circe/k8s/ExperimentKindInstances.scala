@@ -12,7 +12,7 @@ trait ExperimentKindInstances {
       case ExperimentKind.PodChaos     => "PodChaos"
       case ExperimentKind.NetworkChaos => "NetworkChaos"
       case ExperimentKind.StressChaos  => "StressChaos"
-      case ExperimentKind.IoChaos      => "IoChaos"
+      case ExperimentKind.IoChaos      => "IOChaos"
       case ExperimentKind.DnsChaos     => "DNSChaos"
       case ExperimentKind.TimeChaos    => "TimeChaos"
       case ExperimentKind.JvmChaos     => "JVMChaos"

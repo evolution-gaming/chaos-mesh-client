@@ -14,6 +14,7 @@ import weaver._
 import scala.concurrent.duration._
 import com.evolutiongaming.chaosmesh.model.networkchaos.NetChaos
 import com.evolutiongaming.chaosmesh.model.httpchaos.HttpChaos
+import com.evolutiongaming.chaosmesh.model.iochaos.IoChaos
 
 object EncoderDecoderSuite extends SimpleIOSuite {
 
@@ -261,6 +262,30 @@ object EncoderDecoderSuite extends SimpleIOSuite {
       )
     testEncodingDecoding[NetChaos.Spec, NetChaos](
       "network-duplicate.yaml",
+      experiment,
+    )
+  }
+
+  test("io errno") {
+    val experiment =
+      IoChaos(
+        metadata = ResourceMetadata(
+          name = "io-errno-example",
+        ),
+        spec = IoChaos
+          .Spec(
+            action = Action.IoChaos.Fault(5),
+            mode = Mode.One,
+            selector = Selectors()
+              .withByLabels("app" -> "etcd"),
+            duration = 400.seconds,
+            volumePath = "/var/run/etcd",
+          )
+          .withPath("/var/run/etcd/**/*")
+          .withProbability(50),
+      )
+    testEncodingDecoding[IoChaos.Spec, IoChaos](
+      "io-errno.yaml",
       experiment,
     )
   }
