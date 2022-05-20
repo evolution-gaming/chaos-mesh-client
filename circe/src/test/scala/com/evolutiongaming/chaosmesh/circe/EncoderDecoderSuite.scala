@@ -290,4 +290,29 @@ object EncoderDecoderSuite extends SimpleIOSuite {
     )
   }
 
+  test("io latency") {
+    val experiment =
+      IoChaos(
+        metadata = ResourceMetadata(
+          name = "io-delay-example",
+        ),
+        spec = IoChaos
+          .Spec(
+            action = Action.IoChaos.Latency(10.milli),
+            mode = Mode.One,
+            selector = Selectors()
+              .withByLabels("app" -> "etcd"),
+            duration = 400.seconds,
+            volumePath = "/var/run/etcd",
+          )
+          .withPath("/var/run/etcd/**/*")
+          .withProbability(10)
+          .withTargetContainer("etcd"),
+      )
+    testEncodingDecoding[IoChaos.Spec, IoChaos](
+      "io-delay.yaml",
+      experiment,
+    )
+  }
+
 }
