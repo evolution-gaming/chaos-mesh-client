@@ -20,6 +20,10 @@ trait NetworkChaosActionInstances extends DurationInstances {
 
   implicit val netBandwidthDec: Decoder[NetChaos.BandwidthLimit] = deriveDecoder
 
+  implicit val netPacketLossRulesEnc: Encoder.AsObject[NetChaos.PacketLossRules] = deriveEncoder
+
+  implicit val netPacketLossRulesDec: Decoder[NetChaos.PacketLossRules] = deriveDecoder
+
   implicit val netPacketLossEnc: Encoder.AsObject[NetChaos.PacketLoss] = deriveEncoder
 
   implicit val netPacketLossDec: Decoder[NetChaos.PacketLoss] = deriveDecoder

@@ -219,4 +219,27 @@ object EncoderDecoderSuite extends SimpleIOSuite {
     )
   }
 
+  test("net loss") {
+    val experiment =
+      NetChaos(
+        metadata = ResourceMetadata(
+          name = "network-loss-example",
+        ),
+        spec = NetChaos.Spec(
+          action = Action.NetChaos
+            .PacketLoss()
+            .withCorrelation(25)
+            .withProbability(25),
+          mode = Mode.One,
+          duration = 10.seconds,
+          selector = Selectors()
+            .withByLabels("app.kubernetes.io/component" -> "tikv"),
+        ),
+      )
+    testEncodingDecoding[NetChaos.Spec, NetChaos](
+      "network-loss.yaml",
+      experiment,
+    )
+  }
+
 }

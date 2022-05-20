@@ -126,14 +126,42 @@ object Action {
       * Simulating packet loss fault
       * https://chaos-mesh.org/docs/simulate-network-chaos-on-kubernetes/#loss
       * 
+      * @param loss - Indicates packet lost fault rules
+      */
+    final case class PacketLoss(
+      loss: PacketLossRules = PacketLossRules(),
+    ) extends NetChaos {
+
+      /**
+        * Specifies the probability of packet loss. Should be 0..100
+        *
+        */
+      def withProbability(probability: Int) =
+        updateRules(_.copy(loss = probability.toString().some))
+
+      /**
+        * Specifies the correlation between the probability of current packet loss
+        * and the previous time's packet loss. Should be 0..100
+        *
+        */
+      def withCorrelation(correlation: Int) =
+        updateRules(_.copy(correlation = correlation.toString().some))
+
+      private def updateRules(f: PacketLossRules => PacketLossRules) =
+        copy(loss = f(loss))
+    }
+
+    /**
+      * Indicates packet lost fault rules
+      *
       * @param loss - Indicates the probability of packet loss 0..100
       * @param correlation - Indicates the correlation between the probability
       * of current packet loss and the previous time's packet loss 0..100
       */
-    final case class PacketLoss(
-      loss:        Option[Int],
-      correlation: Option[Int],
-    ) extends NetChaos
+    final case class PacketLossRules private[spec] (
+      loss:        Option[String] = None,
+      correlation: Option[String] = None,
+    )
 
     /**
       * Simulating package corruption fault
