@@ -315,4 +315,28 @@ object EncoderDecoderSuite extends SimpleIOSuite {
     )
   }
 
+  test("io attr override") {
+    val experiment =
+      IoChaos(
+        metadata = ResourceMetadata(
+          name = "io-attr-example",
+        ),
+        spec = IoChaos
+          .Spec(
+            action = Action.IoChaos.AttrOverride().withPermission(72),
+            mode = Mode.One,
+            selector = Selectors()
+              .withByLabels("app" -> "etcd"),
+            duration = 400.seconds,
+            volumePath = "/var/run/etcd",
+          )
+          .withPath("/var/run/etcd/**/*")
+          .withProbability(10),
+      )
+    testEncodingDecoding[IoChaos.Spec, IoChaos](
+      "io-attr.yaml",
+      experiment,
+    )
+  }
+
 }

@@ -24,17 +24,17 @@ trait IoChaosActionInstances extends DurationInstances {
 
   implicit val diskAttrTimeSpecDec: Decoder[IoChaos.TimeSpec] = deriveDecoder
 
-  implicit val diskAttrOverrideSpecEnc: Encoder[IoChaos.AttrOverrideSpec] = deriveEncoder
+  implicit val diskAttrOverrideSpecEnc: Encoder[IoChaos.AttrOverrideRules] = deriveEncoder
 
-  implicit val diskAttrOverrideSpecDec: Decoder[IoChaos.AttrOverrideSpec] = deriveDecoder
+  implicit val diskAttrOverrideSpecDec: Decoder[IoChaos.AttrOverrideRules] = deriveDecoder
 
   implicit val diskAttrOverrideEnc: Encoder.AsObject[IoChaos.AttrOverride] = deriveEncoder
 
   implicit val diskAttrOverrideDec: Decoder[IoChaos.AttrOverride] = deriveDecoder
 
-  implicit val diskMistakeSpecEnc: Encoder[IoChaos.MistakeSpec] = deriveEncoder
+  implicit val diskMistakeSpecEnc: Encoder[IoChaos.MistakeRules] = deriveEncoder
 
-  implicit val diskMistakeSpecDec: Decoder[IoChaos.MistakeSpec] = deriveDecoder
+  implicit val diskMistakeSpecDec: Decoder[IoChaos.MistakeRules] = deriveDecoder
 
   implicit val diskMistakeEnc: Encoder.AsObject[IoChaos.Mistake] = deriveEncoder
 

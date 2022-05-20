@@ -366,8 +366,97 @@ object Action {
       * @param attr - Specific property override rules
       */
     final case class AttrOverride(
-      attr: AttrOverrideSpec,
-    ) extends IoChaos
+      attr: AttrOverrideRules = AttrOverrideRules(),
+    ) extends IoChaos {
+
+      /**
+        * Specifies Inode number overriding rule
+        *
+        */
+      def withOverrideIno(ino: Int) =
+        updateRules(_.copy(ino = ino.some))
+
+      /**
+        * Specifies file size overriding rule
+        *
+        */
+      def withOverrideSize(size: Int) =
+        updateRules(_.copy(size = size.some))
+
+      /**
+        * Specifies overriding rule for number of block the file uses
+        *
+        */
+      def withOverrideBlocksNumber(number: Int) =
+        updateRules(_.copy(blocks = number.some))
+
+      /**
+        * Specifies overriding rule for last access time of file in nanoseconds
+        *
+        */
+      def withLastAccessTimeNano(nanos: Long) =
+        updateRules(_.atimeUpdate(_.copy(nsec = nanos.some)))
+
+      /**
+        * Specifies overriding rule for last modified time of file in nanoseconds
+        *
+        */
+      def withLastModifiedTimeNano(nanos: Long) =
+        updateRules(_.mtimeUpdate(_.copy(nsec = nanos.some)))
+
+      /**
+        * Specifies overriding rule for last status change time of file in nanoseconds
+        *
+        */
+      def withLastStatusChangeTimeNano(nanos: Long) =
+        updateRules(_.ctimeUpdate(_.copy(nsec = nanos.some)))
+
+      /**
+        * Specifies overriding rule for file kind
+        * see https://docs.rs/fuser/0.7.0/fuser/enum.FileType.html
+        *
+        */
+      def withKind(kind: String) =
+        updateRules(_.copy(kind = kind.some))
+
+      /**
+        * Specifies overriding rule for file permissions in decimal
+        *
+        */
+      def withPermission(permission: Int) =
+        updateRules(_.copy(perm = permission.some))
+
+      /**
+        * Specifies overriding rule for number of hard links
+        *
+        */
+      def withNumberOfHardLinks(num: Int) =
+        updateRules(_.copy(nlink = num.some))
+
+      /**
+        * Specifies overriding rule for owner ID
+        *
+        */
+      def withOwnerId(id: Int) =
+        updateRules(_.copy(uid = id.some))
+
+      /**
+        * Specifies overriding rule for group ID
+        *
+        */
+      def withGroupId(id: Int) =
+        updateRules(_.copy(gid = id.some))
+
+      /**
+        * Specifies overriding rule for device ID
+        *
+        */
+      def withDeviceId(id: Int) =
+        updateRules(_.copy(rdev = id.some))
+
+      private def updateRules(f: AttrOverrideRules => AttrOverrideRules) =
+        copy(attr = f(attr))
+    }
 
     /**
       * Contains file properties override rules
@@ -385,7 +474,7 @@ object Action {
       * @param gid - Group ID of the owner
       * @param rdev - Device ID
       */
-    final case class AttrOverrideSpec(
+    final case class AttrOverrideRules private[spec] (
       ino:    Option[Int] = None,
       size:   Option[Int] = None,
       blocks: Option[Int] = None,
@@ -398,7 +487,20 @@ object Action {
       uid:    Option[Int] = None,
       gid:    Option[Int] = None,
       rdev:   Option[Int] = None,
-    )
+    ) {
+      private[spec] def atimeUpdate(f: TimeSpec => TimeSpec) = {
+        val updated = atime.fold(TimeSpec())(f)
+        copy(atime = updated.some)
+      }
+      private[spec] def mtimeUpdate(f: TimeSpec => TimeSpec) = {
+        val updated = mtime.fold(TimeSpec())(f)
+        copy(mtime = updated.some)
+      }
+      private[spec] def ctimeUpdate(f: TimeSpec => TimeSpec) = {
+        val updated = ctime.fold(TimeSpec())(f)
+        copy(ctime = updated.some)
+      }
+    }
 
     /**
       * Contains time data for file properties override
@@ -408,8 +510,8 @@ object Action {
       * For the specific meaning of parameters, you can refer to man stat
       */
     final case class TimeSpec(
-      sec:  Option[Int] = None,
-      nsec: Option[Int] = None,
+      sec:  Option[Long] = None,
+      nsec: Option[Long] = None,
     )
 
     /**
@@ -418,7 +520,7 @@ object Action {
       * @param mistake - Specific error rules
       */
     final case class Mistake(
-      mistake: MistakeSpec,
+      mistake: MistakeRules,
     ) extends IoChaos
 
     /**
@@ -428,7 +530,7 @@ object Action {
       * @param maxOccurrences - Maximum number of errors in each operation
       * @param maxLength - Maximum length of each error (in bytes)
       */
-    final case class MistakeSpec(
+    final case class MistakeRules(
       filling:        String,
       maxOccurrences: Int,
       maxLength:      Int,
