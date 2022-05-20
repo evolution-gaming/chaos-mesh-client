@@ -26,11 +26,13 @@ object EncoderDecoderSuite extends SimpleIOSuite {
   private def testDecoding[Spec, Resource <: CustomResource[Spec, ExperimentKind]: Decoder](
     filename: String,
     expected: Resource,
-  ): IO[Expectations] =
-    for {
+  ): IO[Expectations] = {
+    val test = for {
       fileJson <- getJsonContent(s"/$filename")
       parsed   <- IO.fromEither(fileJson.as[Resource])
     } yield expect(parsed == expected)
+    test.handleError(_ => failure("exception happened on decoding"))
+  }
 
   private def testEncoding[Spec: Encoder](
     filename: String,
@@ -171,6 +173,33 @@ object EncoderDecoderSuite extends SimpleIOSuite {
       )
     testEncodingDecoding[NetChaos.Spec, NetChaos](
       "network-delay.yaml",
+      experiment,
+    )
+  }
+
+  test("net bandwith") {
+    val experiment =
+      NetChaos(
+        metadata = ResourceMetadata(
+          name = "network-bandwidth-example",
+        ),
+        spec = NetChaos.Spec(
+          action = Action.NetChaos
+            .BandwidthLimit(
+              rate = 100000,
+              limit = 100,
+              buffer = 10000,
+            )
+            .withPeakRate(1000000)
+            .withPeakRateBucketSize(1000000),
+          mode = Mode.One,
+          duration = 10.seconds,
+          selector = Selectors()
+            .withByLabels("app.kubernetes.io/component" -> "tikv"),
+        ),
+      )
+    testEncodingDecoding[NetChaos.Spec, NetChaos](
+      "network-bandwidth.yaml",
       experiment,
     )
   }

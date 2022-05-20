@@ -63,19 +63,55 @@ object Action {
       * Simulating bandwidth limit fault
       * https://chaos-mesh.org/docs/simulate-network-chaos-on-kubernetes/#bandwidth
       *
-      * @param rate - Indicates the rate of bandwidth limit in bytes per second
-      * @param limit - Indicates the number of bytes waiting in queue
-      * @param buffer - Indicates the maximum number of bytes that can be sent instantaneously
-      * @param peakrate - Indicates the maximum consumption of bucket
-      * @param minburst - Indicates the size of peakrate bucket
+      * @param bandwidth - Indicates bandwidth limit rules 
       */
-    final case class BandwidthLimit(
-      rate:     Long,
+    final case class BandwidthLimit private (
+      bandwidth: BandwidthLimitRules,
+    ) extends NetChaos {
+
+      /**
+        * Specifies the maximum consumption of bucket
+        *
+        */
+      def withPeakRate(peakRate: Long) =
+        updateRules(_.copy(peakrate = peakRate.some))
+
+      /**
+        * Specifies the size of peakrate bucket
+        *
+        */
+      def withPeakRateBucketSize(size: Int) =
+        updateRules(_.copy(minburst = size.some))
+
+      private def updateRules(f: BandwidthLimitRules => BandwidthLimitRules) =
+        copy(bandwidth = f(bandwidth))
+
+    }
+
+    object BandwidthLimit {
+
+      /**
+        * Simulating bandwidth limit fault
+        *
+        * @param rate - Specifies the rate of bandwidth limit in bytes per second
+        * @param limit - Specifies the number of bytes waiting in queue
+        * @param buffer - Specifies the maximum number of bytes that can be sent instantaneously
+        */
+      def apply(
+        rate:   Long,
+        limit:  Long,
+        buffer: Int,
+      ): BandwidthLimit =
+        BandwidthLimit(BandwidthLimitRules(s"${rate}bps", limit, buffer))
+    }
+
+    final case class BandwidthLimitRules private[spec] (
+      rate:     String,
       limit:    Long,
       buffer:   Int,
-      peakrate: Option[Long],
-      minburst: Option[Int],
-    ) extends NetChaos
+      peakrate: Option[Long] = None,
+      minburst: Option[Int] = None,
+    )
 
     /**
       * Simulating packet loss fault
@@ -109,7 +145,7 @@ object Action {
       *
       * @param delay - Indicates delay rules
       */
-    final case class Delay (
+    final case class Delay(
       delay: DelayRules = DelayRules(),
     ) extends NetChaos {
 
@@ -163,14 +199,14 @@ object Action {
 
     }
 
-    final private[chaosmesh] case class DelayRules private[spec](
+    final case class DelayRules private[spec] (
       latency:     Option[FiniteDuration] = None,
       correlation: Option[String] = None,
       jitter:      Option[FiniteDuration] = None,
       reorder:     Option[PacketReorder] = None,
     )
 
-    final private[chaosmesh] case class PacketReorder private[spec] (
+    final case class PacketReorder private[spec] (
       reorder:     Option[String] = None,
       correlation: Option[String] = None,
       gap:         Option[Int] = None,

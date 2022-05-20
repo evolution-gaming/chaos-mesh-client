@@ -8,8 +8,9 @@ spec:
   selector:
     labelSelectors:
       "app.kubernetes.io/component": "tikv"
+  direction: to
   bandwidth:
-    rate: 100kbps
+    rate: 100000bps
     limit: 100
     buffer: 10000
     peakrate: 1000000

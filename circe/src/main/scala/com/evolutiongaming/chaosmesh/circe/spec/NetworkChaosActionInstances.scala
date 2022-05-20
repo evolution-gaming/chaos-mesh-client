@@ -12,6 +12,10 @@ import io.circe.syntax._
 
 trait NetworkChaosActionInstances extends DurationInstances {
 
+  implicit val netBandwidthRulesEnc: Encoder.AsObject[NetChaos.BandwidthLimitRules] = deriveEncoder
+
+  implicit val netBandwidthRulesDec: Decoder[NetChaos.BandwidthLimitRules] = deriveDecoder
+
   implicit val netBandwidthEnc: Encoder.AsObject[NetChaos.BandwidthLimit] = deriveEncoder
 
   implicit val netBandwidthDec: Decoder[NetChaos.BandwidthLimit] = deriveDecoder
