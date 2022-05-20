@@ -4,6 +4,7 @@ import cats.data.NonEmptyList
 import com.evolutiongaming.chaosmesh.model.k8s._
 import com.evolutiongaming.chaosmesh.model.spec.Attributes._
 import com.evolutiongaming.chaosmesh.model.spec._
+import scala.concurrent.duration.FiniteDuration
 
 final case class DnsChaos(
   metadata: ResourceMetadata,
@@ -26,10 +27,12 @@ object DnsChaos {
     action:   Action.DnsChaos,
     mode:     Mode,
     selector: Selectors[Selectors.Filled],
+    duration: FiniteDuration,
     patterns: Option[NonEmptyList[String]] = None,
   ) extends HasAction[Action.DnsChaos]
       with HasMode
-      with HasSelectors {
+      with HasSelectors
+      with HasDuration {
 
     /**
       * Selects a domain template that matches faults. Placeholder ? and wildcard * are supported

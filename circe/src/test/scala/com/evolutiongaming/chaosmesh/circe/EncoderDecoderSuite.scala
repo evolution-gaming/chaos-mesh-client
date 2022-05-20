@@ -15,6 +15,7 @@ import scala.concurrent.duration._
 import com.evolutiongaming.chaosmesh.model.networkchaos.NetChaos
 import com.evolutiongaming.chaosmesh.model.httpchaos.HttpChaos
 import com.evolutiongaming.chaosmesh.model.iochaos.IoChaos
+import com.evolutiongaming.chaosmesh.model.dnschaos.DnsChaos
 
 object EncoderDecoderSuite extends SimpleIOSuite {
 
@@ -365,6 +366,28 @@ object EncoderDecoderSuite extends SimpleIOSuite {
       )
     testEncodingDecoding[IoChaos.Spec, IoChaos](
       "io-mistake.yaml",
+      experiment,
+    )
+  }
+
+  test("dns chaos") {
+    val experiment =
+      DnsChaos(
+        metadata = ResourceMetadata(
+          name = "dns-chaos-example",
+        ),
+        spec = DnsChaos
+          .Spec(
+            action = Action.DnsChaos.Random,
+            mode = Mode.All,
+            selector = Selectors()
+              .withByNamespaces("busybox"),
+            duration = 50.seconds,
+          )
+          .withTargetDomains("google.com", "chaos-mesh.*", "github.?om"),
+      )
+    testEncodingDecoding[DnsChaos.Spec, DnsChaos](
+      "dns-chaos.yaml",
       experiment,
     )
   }
