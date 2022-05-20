@@ -48,9 +48,13 @@ trait NetworkChaosActionInstances extends DurationInstances {
 
   implicit val netDelayDec: Decoder[NetChaos.Delay] = deriveDecoder
 
-  implicit val netDuplicateEnc: Encoder.AsObject[NetChaos.Duplicate] = deriveEncoder
+  implicit val netDuplicateRulesEnc: Encoder.AsObject[NetChaos.PacketDuplicateRules] = deriveEncoder
 
-  implicit val netDuplicateDec: Decoder[NetChaos.Duplicate] = deriveDecoder
+  implicit val netDuplicateRulesDec: Decoder[NetChaos.PacketDuplicateRules] = deriveDecoder
+
+  implicit val netDuplicateEnc: Encoder.AsObject[NetChaos.PacketDuplicate] = deriveEncoder
+
+  implicit val netDuplicateDec: Decoder[NetChaos.PacketDuplicate] = deriveDecoder
 
   implicit val netChaosActionEnc: Encoder.AsObject[Action.NetChaos] =
     Encoder.encodeJsonObject.contramapObject {
@@ -64,7 +68,7 @@ trait NetworkChaosActionInstances extends DurationInstances {
         corrupt.asJsonObject.addType(ActionsEncoding.ActionFieldKey, "corrupt")
       case delay: NetChaos.Delay =>
         delay.asJsonObject.addType(ActionsEncoding.ActionFieldKey, "delay")
-      case duplicate: NetChaos.Duplicate =>
+      case duplicate: NetChaos.PacketDuplicate =>
         duplicate.asJsonObject.addType(ActionsEncoding.ActionFieldKey, "duplicate")
     }
 
@@ -78,7 +82,7 @@ trait NetworkChaosActionInstances extends DurationInstances {
           case "loss"      => c.as[NetChaos.PacketLoss]
           case "corrupt"   => c.as[NetChaos.PacketCorrupt]
           case "delay"     => c.as[NetChaos.Delay]
-          case "duplicate" => c.as[NetChaos.Duplicate]
+          case "duplicate" => c.as[NetChaos.PacketDuplicate]
           case other => DecodingFailure(s"Unknown network chaos action $other", c.history).asLeft
         }
       } yield result

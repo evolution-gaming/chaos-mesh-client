@@ -297,14 +297,43 @@ object Action {
       * Simulating package duplication
       * https://chaos-mesh.org/docs/simulate-network-chaos-on-kubernetes/#duplicate
       *
+      * @param duplicate - Indicates packet duplicate rules 
+      */
+    final case class PacketDuplicate(
+      duplicate: PacketDuplicateRules = PacketDuplicateRules(),
+    ) extends NetChaos {
+
+      /**
+        * Specifies the probability of packet duplicating. Should be 0..100
+        *
+        */
+      def withProbability(probability: Int) =
+        updateRules(_.copy(duplicate = probability.toString().some))
+
+      /**
+        * Specifies the correlation between the probability of current packet duplicating
+        * and the previous time's packet duplicating. Should be 0..100
+        *
+        */
+      def withCorrelation(correlation: Int) =
+        updateRules(_.copy(correlation = correlation.toString().some))
+
+      private def updateRules(f: PacketDuplicateRules => PacketDuplicateRules) =
+        copy(duplicate = f(duplicate))
+
+    }
+
+    /**
+      * Indicates packet duplicate rules
+      *
       * @param duplicate - Indicates the probability of packet duplicating 0..100
       * @param correlation - Indicates the correlation between the probability 
       * of current packet duplicating and the previous time's packet duplicating 0..100
       */
-    final case class Duplicate(
-      duplicate:   Option[Int],
-      correlation: Option[Int],
-    ) extends NetChaos
+    final case class PacketDuplicateRules private[spec] (
+      duplicate:   Option[String] = None,
+      correlation: Option[String] = None,
+    )
 
   }
 

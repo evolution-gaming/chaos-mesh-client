@@ -242,4 +242,27 @@ object EncoderDecoderSuite extends SimpleIOSuite {
     )
   }
 
+  test("net duplication") {
+    val experiment =
+      NetChaos(
+        metadata = ResourceMetadata(
+          name = "network-duplicate-example",
+        ),
+        spec = NetChaos.Spec(
+          action = Action.NetChaos
+            .PacketDuplicate()
+            .withCorrelation(25)
+            .withProbability(40),
+          mode = Mode.One,
+          duration = 10.seconds,
+          selector = Selectors()
+            .withByLabels("app.kubernetes.io/component" -> "tikv"),
+        ),
+      )
+    testEncodingDecoding[NetChaos.Spec, NetChaos](
+      "network-duplicate.yaml",
+      experiment,
+    )
+  }
+
 }
