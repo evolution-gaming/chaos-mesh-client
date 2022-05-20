@@ -339,4 +339,34 @@ object EncoderDecoderSuite extends SimpleIOSuite {
     )
   }
 
+  test("io mistake override") {
+    val experiment =
+      IoChaos(
+        metadata = ResourceMetadata(
+          name = "io-mistake-example",
+          namespace = "chaos-testing".some,
+        ),
+        spec = IoChaos
+          .Spec(
+            action = Action.IoChaos.Mistake(
+              filling = Action.IoChaos.MistakeFillings.Zeros,
+              maxOccurrences = 1,
+              maxLength = 10
+            ),
+            mode = Mode.One,
+            selector = Selectors()
+              .withByLabels("app" -> "etcd"),
+            duration = 400.seconds,
+            volumePath = "/var/run/etcd",
+          )
+          .withPath("/var/run/etcd/**/*")
+          .withMethods("READ", "WRITE")
+          .withProbability(10),
+      )
+    testEncodingDecoding[IoChaos.Spec, IoChaos](
+      "io-mistake.yaml",
+      experiment,
+    )
+  }
+
 }

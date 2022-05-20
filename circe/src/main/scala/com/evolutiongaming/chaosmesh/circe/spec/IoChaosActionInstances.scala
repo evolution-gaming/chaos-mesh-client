@@ -32,6 +32,19 @@ trait IoChaosActionInstances extends DurationInstances {
 
   implicit val diskAttrOverrideDec: Decoder[IoChaos.AttrOverride] = deriveDecoder
 
+    implicit val diskMistakeFillingsEnc: Encoder[IoChaos.MistakeFillings] =
+      Encoder.encodeString.contramap {
+        case IoChaos.MistakeFillings.Zeros => "zero"
+        case IoChaos.MistakeFillings.Random => "random"
+      }
+
+  implicit val diskMistakeFillingsDec: Decoder[IoChaos.MistakeFillings] =
+    Decoder.decodeString.emap {
+      case "zero" => IoChaos.MistakeFillings.Zeros.asRight
+      case "random" => IoChaos.MistakeFillings.Random.asRight
+      case other => s"IO chaos mistake fillings $other is unknown".asLeft
+    }
+
   implicit val diskMistakeSpecEnc: Encoder[IoChaos.MistakeRules] = deriveEncoder
 
   implicit val diskMistakeSpecDec: Decoder[IoChaos.MistakeRules] = deriveDecoder

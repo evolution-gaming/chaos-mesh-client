@@ -523,18 +523,50 @@ object Action {
       mistake: MistakeRules,
     ) extends IoChaos
 
+    object Mistake {
+
+      /**
+        * Specifies read or write mistake faults 
+        *
+        * @param filling - Specifies wrong data to be filled
+        * @param maxOccurrences - Specifies maximum number of errors in each operation
+        * @param maxLength - Specifies maximum length of each error (in bytes)
+        */
+      def apply(
+        filling:        MistakeFillings,
+        maxOccurrences: Int,
+        maxLength:      Int,
+      ): Mistake = Mistake(MistakeRules(filling, maxOccurrences, maxLength))
+
+    }
+
     /**
-      * Specifies read or write mistake rules
+      * Indicates read or write mistake rules
       * 
       * @param filling - The wrong data to be filled. Only zero (fill 0) or random (fill random bytes) are supported
       * @param maxOccurrences - Maximum number of errors in each operation
       * @param maxLength - Maximum length of each error (in bytes)
       */
-    final case class MistakeRules(
-      filling:        String,
+    final case class MistakeRules private[spec] (
+      filling:        MistakeFillings,
       maxOccurrences: Int,
       maxLength:      Int,
     )
+
+    sealed trait MistakeFillings
+
+    object MistakeFillings {
+
+      /**
+        * All file read or write mistakes will be filled with zeros
+        */
+      case object Zeros extends MistakeFillings
+
+      /**
+        * All file read or write mistakes will be filled with random values
+        */
+      case object Random extends MistakeFillings
+    }
   }
 
   sealed trait DnsChaos extends Action

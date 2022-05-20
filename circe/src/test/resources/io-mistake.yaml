@@ -1,9 +1,9 @@
 apiVersion: chaos-mesh.org/v1alpha1
-ind: IOChaos
+kind: IOChaos
 metadata:
   name: io-mistake-example
   namespace: chaos-testing
-special:
+spec:
   action: mistake
   mode: one
   selector:
