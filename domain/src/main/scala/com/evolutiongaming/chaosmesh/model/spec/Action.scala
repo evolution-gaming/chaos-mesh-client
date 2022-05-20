@@ -2,6 +2,7 @@ package com.evolutiongaming.chaosmesh.model.spec
 
 import cats.Id
 import cats.data.NonEmptyList
+import cats.syntax.all._
 
 import scala.concurrent.duration.FiniteDuration
 
@@ -38,6 +39,7 @@ object Action {
         with Attributes.HasTargetContainers[Id]
 
     object ContainerKill {
+
       /**
         * Specifies target container names
         *
@@ -105,31 +107,73 @@ object Action {
       * Simulating network delay fault
       * https://chaos-mesh.org/docs/simulate-network-chaos-on-kubernetes/#delay
       *
-      * @param latency - Indicates the network latency
-      * @param correlation - Indicates the correlation between the current latency and the previous one 0..100
-      * @param jitter - Indicates the range of the network latency
-      * @param reorder - Indicates packet reordering fault rules
+      * @param delay - Indicates delay rules
       */
-    final case class Delay(
-      latency:     Option[FiniteDuration],
-      correlation: Option[Int],
-      jitter:      Option[FiniteDuration],
-      reorder:     Option[PacketReorder],
-    ) extends NetChaos
+    final case class Delay private (
+      delay: DelayRules = DelayRules(),
+    ) extends NetChaos {
 
-    /**
-      * Simulating network packet reordering fault
-      * https://chaos-mesh.org/docs/simulate-network-chaos-on-kubernetes/#reorder
-      *
-      * @param reorder - Indicates the probability to reorder 0..100
-      * @param correlation - Indicates the correlation between this time's length of delay time
-      * and the previous time's length of delay time 0..100
-      * @param gap - Indicates the gap before and after packet reordering	
-      */
-    final case class PacketReorder(
-      reorder:     Option[Int],
-      correlation: Option[Int],
-      gap:         Option[Int],
+      /**
+        * Specifies the network latency
+        *
+        */
+      def withLatency(duration: FiniteDuration) =
+        Delay(delay.copy(latency = duration.some))
+
+      /**
+        * Specifies the correlation between the current latency and the previous one. Should be 0..100
+        *
+        */
+      def withCorrelation(correlation: Int) =
+        Delay(delay.copy(correlation = correlation.toString.some))
+
+      /**
+        * Specifies the range of the network latency
+        *
+        */
+      def withJitter(jitter: FiniteDuration) =
+        Delay(delay.copy(jitter = jitter.some))
+
+      /**
+        * Specifies the probability to reorder. Should be 0..100
+        *
+        */
+      def withReorderingProbability(probability: Int) =
+        updateReordering(_.copy(reorder = probability.toString.some))
+
+      /**
+        * Specifies the correlation between this time's length of delay time
+        * and the previous time's length of delay time. Should be 0..100
+        *
+        */
+      def withReorderingCorrelation(corr: Int) =
+        updateReordering(_.copy(correlation = corr.toString.some))
+
+      /**
+        * Specifies the gap before and after packet reordering	
+        *
+        */
+      def withReorderingGap(gap: Int) =
+        updateReordering(_.copy(gap = gap.some))
+
+      private def updateReordering(f: PacketReorder => PacketReorder) = {
+        val updated = delay.reorder.fold(PacketReorder())(f)
+        Delay(delay.copy(reorder = updated.some))
+      }
+
+    }
+
+    final private[chaosmesh] case class DelayRules private (
+      latency:     Option[FiniteDuration] = None,
+      correlation: Option[String] = None,
+      jitter:      Option[FiniteDuration] = None,
+      reorder:     Option[PacketReorder] = None,
+    )
+
+    final private[chaosmesh] case class PacketReorder private (
+      reorder:     Option[String] = None,
+      correlation: Option[String] = None,
+      gap:         Option[Int] = None,
     )
 
     /**

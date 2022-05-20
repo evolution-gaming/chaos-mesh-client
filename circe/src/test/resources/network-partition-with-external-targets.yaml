@@ -4,16 +4,19 @@ metadata:
   name: network-partition-example
 spec:
   action: partition
-  mode: one
+  mode: random-max-percent
+  value: "100"
   selector:
     labelSelectors:
-      "app.kubernetes.io/component": "tikv"
+      "traffic": "output"
   direction: to
+  target:
+    selector:
+      annotationSelectors:
+        "traffic": "input"
+    mode: one
   externalTargets:
     - "8.8.8.8"
     - "www.google.com"
     - "8.8.0.0/16"
-    - "1.1.1.1:80"
-    - "example.com:443"
-    - "10.0.0.0/8:22"
   duration: "10s"

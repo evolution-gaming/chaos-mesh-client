@@ -28,6 +28,10 @@ trait NetworkChaosActionInstances extends DurationInstances {
 
   implicit val netPacketReorderDec: Decoder[NetChaos.PacketReorder] = deriveDecoder
 
+  implicit val netDelayRulesEnc: Encoder.AsObject[NetChaos.DelayRules] = deriveEncoder
+
+  implicit val netDelayRulesDec: Decoder[NetChaos.DelayRules] = deriveDecoder
+
   implicit val netDelayEnc: Encoder.AsObject[NetChaos.Delay] = deriveEncoder
 
   implicit val netDelayDec: Decoder[NetChaos.Delay] = deriveDecoder

@@ -20,9 +20,16 @@ trait NetworkChaosInstances
 
   protected val DirectionField = "direction"
 
-  implicit val netDirectionTargetEnc: Encoder[Direction.Target] = deriveEncoder
+  implicit val netDirectionTargetEnc: Encoder[Direction.Target] =
+    deriveEncoder[Direction.Target]
+      .mapJsonObject(_.deepMergeObjInField(ModeField))
 
-  implicit val netDirectionTargetDec: Decoder[Direction.Target] = deriveDecoder
+  implicit val netDirectionTargetDec: Decoder[Direction.Target] =
+    for {
+      mode <- modeDec
+      decoder <- deriveDecoder[Direction.Target]
+        .prepare(_.replaceFieldValue(ModeField, mode.asJson))
+    } yield decoder
 
   implicit val netDirectionToEnc: Encoder.AsObject[Direction.To] = deriveEncoder
 

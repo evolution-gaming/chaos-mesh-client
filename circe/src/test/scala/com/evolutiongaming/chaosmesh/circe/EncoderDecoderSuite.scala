@@ -12,6 +12,8 @@ import io.circe.syntax._
 import weaver._
 
 import scala.concurrent.duration._
+import com.evolutiongaming.chaosmesh.model.networkchaos.NetChaos
+import com.evolutiongaming.chaosmesh.model.httpchaos.HttpChaos
 
 object EncoderDecoderSuite extends SimpleIOSuite {
 
@@ -36,9 +38,9 @@ object EncoderDecoderSuite extends SimpleIOSuite {
   ): IO[Expectations] =
     for {
       fileJson <- getJsonContent(s"/$filename")
-      encoded = toEncode.asJson
+      encoded        = toEncode.asJson
       encodedJsonStr = encoded.printWith(testPrinter)
-      fileJsonStr = fileJson.printWith(testPrinter)
+      fileJsonStr    = fileJson.printWith(testPrinter)
     } yield expect(encodedJsonStr == fileJsonStr)
 
   private def testEncodingDecoding[Spec, Resource <: CustomResource[Spec, ExperimentKind]](
@@ -103,6 +105,74 @@ object EncoderDecoderSuite extends SimpleIOSuite {
         ),
       )
     testEncodingDecoding[PodChaos.Spec, PodChaos]("container-kill.yaml", containerKill)
+  }
+
+  test("net partition") {
+    val experiment =
+      NetChaos(
+        metadata = ResourceMetadata(
+          name = "network-partition-example",
+        ),
+        spec = NetChaos.Spec(
+          action = Action.NetChaos.NetPartition,
+          direction = Direction
+            .To()
+            .withTarget(
+              Direction.Target(
+                mode = Mode.One,
+                selector = Selectors().withByAnnotations("traffic" -> "input"),
+              ),
+            )
+            .withExternalTargets(
+              "8.8.8.8",
+              "www.google.com",
+              "8.8.0.0/16",
+            )
+            .some,
+          mode = Mode.RandomMaxPercent(100),
+          duration = 10.seconds,
+          selector = Selectors().withByLabels("traffic" -> "output"),
+        ),
+      )
+    testEncodingDecoding[NetChaos.Spec, NetChaos](
+      "network-partition-with-external-targets.yaml",
+      experiment,
+    )
+  }
+
+  test("net delay") {
+    val experiment =
+      NetChaos(
+        metadata = ResourceMetadata(
+          name = "network-delay-example",
+        ),
+        spec = NetChaos.Spec(
+          action = Action.NetChaos
+            .Delay()
+            .withLatency(90.millis)
+            .withJitter(90.millis)
+            .withCorrelation(25),
+          direction = Direction
+            .From(
+              Direction.Target(
+                mode = Mode.All,
+                selector = Selectors()
+                  .withByNamespaces("db", "storage")
+                  .withByLabels("app.kubernetes.io/component" -> "pool"),
+              ),
+            )
+            .some,
+          mode = Mode.One,
+          duration = 10.seconds,
+          selector = Selectors()
+            .withByNamespaces("web")
+            .withByLabels("app.kubernetes.io/component" -> "web-app"),
+        ),
+      )
+    testEncodingDecoding[NetChaos.Spec, NetChaos](
+      "network-delay.yaml",
+      experiment,
+    )
   }
 
 }

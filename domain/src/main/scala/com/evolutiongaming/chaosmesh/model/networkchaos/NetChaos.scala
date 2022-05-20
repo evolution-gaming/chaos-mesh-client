@@ -5,6 +5,7 @@ import com.evolutiongaming.chaosmesh.model.k8s._
 import com.evolutiongaming.chaosmesh.model.spec.Attributes._
 import com.evolutiongaming.chaosmesh.model.spec._
 import cats.data.NonEmptyList
+import scala.concurrent.duration.FiniteDuration
 
 final case class NetChaos(
   metadata: ResourceMetadata,
@@ -33,12 +34,14 @@ object NetChaos {
     selector:       Selectors[Selectors.Filled],
     containerNames: Option[NonEmptyList[String]] = None,
     device:         Option[String] = None,
+    duration:       FiniteDuration,
   ) extends HasAction[Action.NetChaos]
       with HasMode
       with HasDirection[Option]
       with HasTargetContainers[Option]
       with HasSelectors
-      with HasTargetNetworkDevice[Option] {
+      with HasTargetNetworkDevice[Option]
+      with HasDuration {
 
     /**
       * Indicates the direction

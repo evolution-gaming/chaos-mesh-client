@@ -14,9 +14,9 @@ object Direction {
     * @param target - Specifies targets inside of Kubernetes cluster
     * @param externalTargets - Specifies targets by domain name
     */
-  final case class To(
-    target:          Option[Target],
-    externalTargets: Option[NonEmptyList[String]],
+  final case class To private(
+    target:          Option[Target] = None,
+    externalTargets: Option[NonEmptyList[String]] = None,
   ) extends Direction {
 
     /**
@@ -33,6 +33,10 @@ object Direction {
     def withTarget(target: Target) =
       copy(target = target.some)
 
+  }
+
+  object To {
+    def apply(): To = To(None, None)
   }
 
   /**
