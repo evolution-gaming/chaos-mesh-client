@@ -55,33 +55,33 @@ import org.typelevel.log4cats.Logger
 
 implicit val logger: Logger[IO] = Slf4jLogger.getLogger[IO]
 
-val  experiment  =
-PodChaos(
-	metadata =  ResourceMetadata(
-		name      =  "pod-failure-example",
-		namespace =  "chaos-testing".some,
+val experiment  =
+  PodChaos(
+    metadata =  ResourceMetadata(
+	  name      = "pod-failure-example",
+	  namespace = "chaos-testing".some,
 	),
 	spec =  PodChaos.Spec(
-		action   =  Action.PodChaos.PodFailure,
-		mode     =  Mode.One,
-		duration =  30.seconds,
-		selector =  Selectors().withByLabels("app.kubernetes.io/component"  ->  "tikv"),
+	  action   = Action.PodChaos.PodFailure,
+	  mode     = Mode.One,
+	  duration = 30.seconds,
+	  selector = Selectors().withByLabels("app.kubernetes.io/component"  ->  "tikv"),
 	),
-)
+  )
  
-def  api:  Resource[IO, ChaosMeshApi[IO]] =
-	for  {
-		file      <-  IO(new File(s"${System.getProperty("user.home")}/.kube/config")).toResource
-		config    <-  KubeConfig.fromFile(file).toResource
-		k8sClient <-  KubernetesClient[IO](config)
-	}  yield  ChaosMeshApi(k8sClient)
+def api: Resource[IO, ChaosMeshApi[IO]] =
+  for  {
+    file       <- IO(new File(s"${System.getProperty("user.home")}/.kube/config")).toResource
+    config     <- KubeConfig.fromFile(file).toResource
+    k8sClient <- KubernetesClient[IO](config)
+  } yield ChaosMeshApi(k8sClient)
 
 def createPodFailure: IO[Status] =
-	apiResource.use { chaosMeshApi =>
-		chaosMeshApi.pod
-			.namespace("chaos-testing")
-			.create(experiment.asK8sClientResource)
-	}
+  apiResource.use { chaosMeshApi =>
+    chaosMeshApi.pod
+	  .namespace("chaos-testing")
+	  .create(experiment.asK8sClientResource)
+  }
 ```
 
 ###  Create Network Partition experiment
@@ -100,40 +100,40 @@ import org.typelevel.log4cats.Logger
 
 implicit val logger: Logger[IO] = Slf4jLogger.getLogger[IO]
 
-val  experiment  =  
-NetChaos(
-	metadata =  ResourceMetadata(
-		name =  "net-partition",
-		namespace =  "chaos-testing".some,
-	),
-	spec =  NetChaos.Spec(
-		action =  Action.NetChaos.NetPartition,
-		mode =  Mode.One,
-		duration =  30.seconds,
-		selector =  Selectors().withByLabels("app"  ->  "frontend"),
-	)
-	.withDirection(
-		Direction.Both(
-			Direction.Target(
-				mode =  Mode.All,
-				selector = Selectors().withByLabels("app"  ->  "backend"),
-			),
+val experiment  =  
+  NetChaos(
+    metadata = ResourceMetadata(
+      name      = "net-partition",
+      namespace = "chaos-testing".some,
+    ),
+    spec = NetChaos.Spec(
+      action   =  Action.NetChaos.NetPartition,
+      mode     =  Mode.One,
+      duration =  30.seconds,
+      selector =  Selectors().withByLabels("app"  ->  "frontend"),
+    )
+    .withDirection(
+	  Direction.Both(
+	    Direction.Target(
+		  mode     =  Mode.All,
+		  selector = Selectors().withByLabels("app"  ->  "backend"),
 		),
+	  ),
 	),
-)
+  )
  
-def  api:  Resource[IO, ChaosMeshApi[IO]] =
-	for  {
-		file      <-  IO(new File(s"${System.getProperty("user.home")}/.kube/config")).toResource
-		config    <-  KubeConfig.fromFile(file).toResource
-		k8sClient <-  KubernetesClient[IO](config)
-	}  yield  ChaosMeshApi(k8sClient)
+def api: Resource[IO, ChaosMeshApi[IO]] =
+  for {
+    file       <- IO(new File(s"${System.getProperty("user.home")}/.kube/config")).toResource
+    config     <- KubeConfig.fromFile(file).toResource
+    k8sClient <- KubernetesClient[IO](config)
+  } yield ChaosMeshApi(k8sClient)
 
 def createPodFailure: IO[Status] =
-	apiResource.use { chaosMeshApi =>
-		chaosMeshApi.network
-			.namespace("chaos-testing")
-			.create(experiment.asK8sClientResource)
-	}
+  apiResource.use { chaosMeshApi =>
+	chaosMeshApi.network
+	  .namespace("chaos-testing")
+	  .create(experiment.asK8sClientResource)
+  }
 ```
 More examples of experiment definitions could be found in [TestSuite](./circe/src/test/scala/com/evolutiongaming/chaosmesh/circe/EncoderDecoderSuite.scala)
