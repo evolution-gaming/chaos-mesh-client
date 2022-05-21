@@ -18,6 +18,7 @@ import com.evolutiongaming.chaosmesh.model.iochaos.IoChaos
 import com.evolutiongaming.chaosmesh.model.dnschaos.DnsChaos
 import com.evolutiongaming.chaosmesh.circe.common.DurationInstances
 import com.evolutiongaming.chaosmesh.model.timechaos.TimeChaos
+import com.evolutiongaming.chaosmesh.model.jvmchaos.JvmChaos
 
 object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
 
@@ -354,7 +355,7 @@ object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
             action = Action.IoChaos.Mistake(
               filling = Action.IoChaos.MistakeFillings.Zeros,
               maxOccurrences = 1,
-              maxLength = 10
+              maxLength = 10,
             ),
             mode = Mode.One,
             selector = Selectors()
@@ -421,6 +422,30 @@ object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
       parsed   <- IO.fromEither(fileJson.as[TimeChaos])
       time = parsed.spec.timeOffset
     } yield expect(time == -600000000100L.nanos)
+  }
+
+  test("jvm exception") {
+    val experiment =
+      JvmChaos(
+        metadata = ResourceMetadata(
+          name = "exception",
+        ),
+        spec = JvmChaos
+          .Spec(
+            action = Action.JvmChaos.Exception(
+              `class` = "Main",
+              method = "sayhello",
+              exception = "java.io.IOException(\"BOOM\")",
+            ),
+            mode = Mode.All,
+            selector = Selectors()
+              .withByNamespaces("helloworld"),
+          ),
+      )
+    testEncodingDecoding[JvmChaos.Spec, JvmChaos](
+      "jvm-exception.yaml",
+      experiment,
+    )
   }
 
 }
