@@ -5,7 +5,7 @@ import com.evolutiongaming.chaosmesh.model.spec._
 
 import scala.concurrent.duration.FiniteDuration
 
-object Attributes {
+private [chaosmesh] object Attributes {
 
   trait HasAction[A <: Action] {
     def action: A

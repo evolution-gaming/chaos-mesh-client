@@ -33,7 +33,7 @@ object Action {
       *
       * @param containerNames - Target containers
       */
-    case class ContainerKill(
+    case class ContainerKill private[chaosmesh](
       containerNames: NonEmptyList[String],
     ) extends PodChaos
         with Attributes.HasTargetContainers[Id]
@@ -65,7 +65,7 @@ object Action {
       *
       * @param bandwidth - Indicates bandwidth limit rules 
       */
-    final case class BandwidthLimit private (
+    final case class BandwidthLimit private[chaosmesh] (
       bandwidth: BandwidthLimitRules,
     ) extends NetChaos {
 
@@ -128,7 +128,7 @@ object Action {
       * 
       * @param loss - Indicates packet lost fault rules
       */
-    final case class PacketLoss(
+    final case class PacketLoss private[chaosmesh](
       loss: PacketLossRules = PacketLossRules(),
     ) extends NetChaos {
 
@@ -169,7 +169,7 @@ object Action {
       *
       * @param corrupt - Indicates packet corrupt rules 
       */
-    final case class PacketCorrupt(
+    final case class PacketCorrupt private[chaosmesh](
       corrupt: PacketCorruptRules = PacketCorruptRules(),
     ) extends NetChaos {
 
@@ -210,7 +210,7 @@ object Action {
       *
       * @param delay - Indicates delay rules
       */
-    final case class Delay(
+    final case class Delay private[chaosmesh](
       delay: DelayRules = DelayRules(),
     ) extends NetChaos {
 
@@ -299,7 +299,7 @@ object Action {
       *
       * @param duplicate - Indicates packet duplicate rules 
       */
-    final case class PacketDuplicate(
+    final case class PacketDuplicate private[chaosmesh](
       duplicate: PacketDuplicateRules = PacketDuplicateRules(),
     ) extends NetChaos {
 
@@ -365,7 +365,7 @@ object Action {
       *
       * @param attr - Specific property override rules
       */
-    final case class AttrOverride(
+    final case class AttrOverride private[chaosmesh](
       attr: AttrOverrideRules = AttrOverrideRules(),
     ) extends IoChaos {
 
@@ -509,7 +509,7 @@ object Action {
       * @param nsec - timestamp in nanoseconds
       * For the specific meaning of parameters, you can refer to man stat
       */
-    final case class TimeSpec(
+    final case class TimeSpec private[spec](
       sec:  Option[Long] = None,
       nsec: Option[Long] = None,
     )
@@ -519,7 +519,7 @@ object Action {
       * 
       * @param mistake - Specific error rules
       */
-    final case class Mistake(
+    final case class Mistake private[chaosmesh](
       mistake: MistakeRules,
     ) extends IoChaos
 
