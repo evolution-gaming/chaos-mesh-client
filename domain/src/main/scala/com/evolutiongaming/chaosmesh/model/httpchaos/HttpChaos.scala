@@ -61,10 +61,10 @@ object HttpChaos {
     path:           Option[String] = None,
     method:         Option[String] = None,
     requestHeaders: Option[NonEmptyMap[String, String]] = None,
-    abort:          Boolean = false,
-    delay:          FiniteDuration = 0.seconds,
-    replace:        Option[Replace] = None,
-    patch:          Option[Patch] = None,
+    abort:          Option[Boolean] = None,
+    delay:          Option[FiniteDuration] = None,
+    replace:        Replace = Replace(),
+    patch:          Patch = Patch(),
     scheduler:      Option[String] = None,
   ) extends HasMode
       with HasSelectors
@@ -80,7 +80,7 @@ object HttpChaos {
       copy(requestHeaders = NonEmptyMap.fromMap(SortedMap(headers: _*)))
 
     def abortRequest(abort: Boolean) =
-      copy(abort = abort)
+      copy(abort = abort.some)
 
     /**
       * Specifies the key pair used to replace the request headers or response headers
@@ -122,15 +122,18 @@ object HttpChaos {
       updatePatch(_.copy(headers = NonEmptyList.of(asNelFirst, asNelRest: _*).some))
     }
 
-    private def updateReplace(f: Replace => Replace) = {
-      val updatedReplace = replace.fold(Replace())(f)
-      copy(replace = updatedReplace.some)
-    }
+    /**
+      * Specifies the time for a latency fault
+      *
+      */
+    def withDelay(delay: FiniteDuration) =
+      copy(delay = delay.some)
 
-    private def updatePatch(f: Patch => Patch) = {
-      val updatedPatch = patch.fold(Patch())(f)
-      copy(patch = updatedPatch.some)
-    }
+    private def updateReplace(f: Replace => Replace) =
+      copy(replace = f(replace))
+
+    private def updatePatch(f: Patch => Patch) =
+      copy(patch = f(patch))
   }
 
   sealed trait Target
@@ -144,8 +147,8 @@ object HttpChaos {
       * @param patch - Specifies patch rules for request to target
       */
     final case class Request(
-      replace: Option[RequestReplace] = None,
-      patch:   Option[RequestPatch] = None,
+      replace: RequestReplace = RequestReplace(),
+      patch:   RequestPatch = RequestPatch(),
     ) extends Target {
 
       /**
@@ -181,15 +184,12 @@ object HttpChaos {
         updatePatch(_.copy(NonEmptyList.of(asNelFirst, asNelRest: _*).some))
       }
 
-      private def updateReplace(f: RequestReplace => RequestReplace) = {
-        val updated = replace.fold(RequestReplace())(f)
-        copy(replace = updated.some)
-      }
+      private def updateReplace(f: RequestReplace => RequestReplace) =
+        copy(replace = f(replace))
 
-      private def updatePatch(f: RequestPatch => RequestPatch) = {
-        val updated = patch.fold(RequestPatch())(f)
-        copy(patch = updated.some)
-      }
+      private def updatePatch(f: RequestPatch => RequestPatch) =
+        copy(patch = f(patch))
+
     }
 
     /**
@@ -203,9 +203,9 @@ object HttpChaos {
       * @param replace - Specifies replace rules for response by target
       */
     final case class Response(
-      code:            Option[Int],
-      responseHeaders: Option[NonEmptyMap[String, String]],
-      replace:         Option[ResponseReplace] = None,
+      code:            Option[Int] = None,
+      responseHeaders: Option[NonEmptyMap[String, String]] = None,
+      replace:         ResponseReplace = ResponseReplace(),
     ) extends Target {
 
       /**
@@ -229,10 +229,8 @@ object HttpChaos {
       def withReplacedResponseCode(code: Int) =
         updateReplace(_.copy(code = code.some))
 
-      private def updateReplace(f: ResponseReplace => ResponseReplace) = {
-        val updated = replace.fold(ResponseReplace())(f)
-        copy(replace = updated.some)
-      }
+      private def updateReplace(f: ResponseReplace => ResponseReplace) =
+        copy(replace = f(replace))
     }
   }
 
@@ -244,12 +242,10 @@ object HttpChaos {
     */
   final case class Patch(
     headers: Option[NonEmptyList[NonEmptyList[String]]] = None,
-    body:    Option[Body] = None,
+    body:    Body = Body(),
   ) {
-    def updateBody(f: Body => Body) = {
-      val updatedBody = body.fold(Body())(f)
-      copy(body = updatedBody.some)
-    }
+    def updateBody(f: Body => Body) =
+      copy(body = f(body))
   }
 
   /**

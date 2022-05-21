@@ -26,23 +26,33 @@ trait HttpChaosInstances
 
   implicit val bodyEnc: Encoder[HttpChaos.Body] = deriveEncoder
 
-  implicit val bodyDec: Decoder[HttpChaos.Body] = deriveDecoder
+  implicit val bodyDec: Decoder[HttpChaos.Body] =
+    deriveDecoder[HttpChaos.Body] <+>
+    Decoder.decodeNone.map(_ => HttpChaos.Body())
 
   implicit val patchEnc: Encoder[HttpChaos.Patch] = deriveEncoder
 
-  implicit val patchDec: Decoder[HttpChaos.Patch] = deriveDecoder
+  implicit val patchDec: Decoder[HttpChaos.Patch] =
+    deriveDecoder[HttpChaos.Patch] <+>
+    Decoder.decodeNone.map(_ => HttpChaos.Patch())
 
   implicit val replaceEnc: Encoder[HttpChaos.Replace] = deriveEncoder
 
-  implicit val replaceDec: Decoder[HttpChaos.Replace] = deriveDecoder
+  implicit val replaceDec: Decoder[HttpChaos.Replace] =
+    deriveDecoder[HttpChaos.Replace] <+>
+    Decoder.decodeNone.map(_ => HttpChaos.Replace())
 
   implicit val requestReplaceEnc: Encoder[HttpChaos.RequestReplace] = deriveEncoder
 
-  implicit val requestReplaceDec: Decoder[HttpChaos.RequestReplace] = deriveDecoder
+  implicit val requestReplaceDec: Decoder[HttpChaos.RequestReplace] =
+    deriveDecoder[HttpChaos.RequestReplace] <+>
+      Decoder.decodeNone.map(_ => HttpChaos.RequestReplace())
 
   implicit val requestPatchEnc: Encoder[HttpChaos.RequestPatch] = deriveEncoder
 
-  implicit val requestPatchDec: Decoder[HttpChaos.RequestPatch] = deriveDecoder
+  implicit val requestPatchDec: Decoder[HttpChaos.RequestPatch] =
+    deriveDecoder[HttpChaos.RequestPatch] <+>
+    Decoder.decodeNone.map(_ => HttpChaos.RequestPatch())
 
   implicit val responseReplaceEnc: Encoder[HttpChaos.ResponseReplace] =
     deriveEncoder[HttpChaos.ResponseReplace]
@@ -80,7 +90,7 @@ trait HttpChaosInstances
       } yield result
     }
 
-  implicit val httpChaosSpecEnc: Encoder.AsObject[HttpChaos.Spec] =
+  implicit val httpChaosSpecEnc: Encoder[HttpChaos.Spec] =
     deriveEncoder[HttpChaos.Spec]
       .mapJsonObject(_.deepMergeObjInField(TargetField))
       .mapJsonObject(_.deepMergeObjInField(ModeField))

@@ -42,7 +42,7 @@ object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
     } yield expect(parsed == expected)
     test.handleError(err => failure(s"exception happened on decoding $err"))
   }
-
+  import com.evolutiongaming.chaosmesh.circe.common.CirceOps._
   private def testEncoding[Spec: Encoder](
     filename: String,
     toEncode: CustomResource[Spec, ExperimentKind],
@@ -52,7 +52,7 @@ object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
       encoded        = toEncode.asJson
       encodedJsonStr = encoded.printWith(testPrinter)
       fileJsonStr    = fileJson.printWith(testPrinter)
-    } yield expect(encodedJsonStr == fileJsonStr)
+    } yield expect.eql(encodedJsonStr, fileJsonStr)
 
   private def testEncodingDecoding[Spec, Resource <: CustomResource[Spec, ExperimentKind]](
     filename:     String,
@@ -521,6 +521,63 @@ object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
       )
     testEncodingDecoding[JvmChaos.Spec, JvmChaos](
       "jvm-rule-data.yaml",
+      experiment,
+    )
+  }
+
+  test("http failure") {
+    val experiment =
+      HttpChaos(
+        metadata = ResourceMetadata(
+          name = "test-http-chaos",
+        ),
+        spec = HttpChaos
+          .Spec(
+            mode = Mode.All,
+            selector = Selectors()
+              .withByLabels("app" -> "nginx"),
+            target = HttpChaos.Target
+              .Request()
+              .withReplacedMethod("DELETE")
+              .withReplacedPath("/api/v2/"),
+            port = 80,
+            duration = 5.minutes,
+          )
+          .withDelay(10.seconds)
+          .matchingMethod("GET")
+          .withPatchBodyType("JSON")
+          .withPatchBodyContent("{\"foo\": \"bar\"}")
+          .withPatchHeaders("Token" -> "<one token>", "Token" -> "<another token>")
+          .matchingPath("/api/*"),
+      )
+    testEncodingDecoding[HttpChaos.Spec, HttpChaos](
+      "http-failure.yaml",
+      experiment,
+    )
+  }
+
+  test("http abort") {
+    val experiment =
+      HttpChaos(
+        metadata = ResourceMetadata(
+          name = "test-http-chaos",
+        ),
+        spec = HttpChaos
+          .Spec(
+            mode = Mode.All,
+            selector = Selectors()
+              .withByLabels("app" -> "nginx"),
+            target = HttpChaos.Target
+              .Request(),
+            port = 80,
+            duration = 5.minutes,
+          )
+          .abortRequest(true)
+          .matchingMethod("GET")
+          .matchingPath("/api"),
+      )
+    testEncodingDecoding[HttpChaos.Spec, HttpChaos](
+      "http-abort-failure.yaml",
       experiment,
     )
   }
