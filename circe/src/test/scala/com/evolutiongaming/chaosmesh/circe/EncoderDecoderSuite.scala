@@ -177,33 +177,6 @@ object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
     )
   }
 
-  test("net loss") {
-    val experiment =
-      NetChaos(
-        metadata = ResourceMetadata(
-          name = "network-bandwidth-example",
-        ),
-        spec = NetChaos.Spec(
-          action = Action.NetChaos
-            .BandwidthLimit(
-              rate = 100000,
-              limit = 100,
-              buffer = 10000,
-            )
-            .withPeakRate(1000000)
-            .withPeakRateBucketSize(1000000),
-          mode = Mode.One,
-          duration = 10.seconds,
-          selector = Selectors()
-            .withByLabels("app.kubernetes.io/component" -> "tikv"),
-        ),
-      )
-    testEncodingDecoding[NetChaos.Spec, NetChaos](
-      "network-bandwidth.yaml",
-      experiment,
-    )
-  }
-
   test("net corrupt") {
     val experiment =
       NetChaos(
