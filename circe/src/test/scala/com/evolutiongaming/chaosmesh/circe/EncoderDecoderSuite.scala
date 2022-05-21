@@ -479,14 +479,12 @@ object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
     val experiment =
       JvmChaos(
         metadata = ResourceMetadata(
-          name = "return",
+          name = "modify-return",
         ),
         spec = JvmChaos
           .Spec(
-            action = Action.JvmChaos.Return(
-              `class` = "Main",
-              method = "getnum",
-              value = "9999",
+            action = Action.JvmChaos.RuleData(
+              ruleData = "RULE modify return value\nCLASS Main\nMETHOD getnum\nAT ENTRY\nIF true\nDO\n    return 9999\nENDRULE",
             ),
             mode = Mode.All,
             selector = Selectors()
@@ -494,7 +492,7 @@ object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
           ),
       )
     testEncodingDecoding[JvmChaos.Spec, JvmChaos](
-      "jvm-return.yaml",
+      "jvm-rule-data.yaml",
       experiment,
     )
   }
