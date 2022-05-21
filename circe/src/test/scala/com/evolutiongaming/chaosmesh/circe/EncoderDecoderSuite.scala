@@ -12,13 +12,13 @@ import com.evolutiongaming.chaosmesh.model.k8s._
 import com.evolutiongaming.chaosmesh.model.networkchaos.NetChaos
 import com.evolutiongaming.chaosmesh.model.podchaos.PodChaos
 import com.evolutiongaming.chaosmesh.model.spec._
+import com.evolutiongaming.chaosmesh.model.stresschaos.StressChaos
 import com.evolutiongaming.chaosmesh.model.timechaos.TimeChaos
 import io.circe._
 import io.circe.syntax._
 import weaver._
 
 import scala.concurrent.duration._
-import com.evolutiongaming.chaosmesh.model.stresschaos.StressChaos
 
 /**
   * Example test files are based on https://github.com/chaos-mesh/chaos-mesh/tree/master/examples
