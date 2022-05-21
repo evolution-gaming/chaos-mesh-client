@@ -20,6 +20,9 @@ import weaver._
 
 import scala.concurrent.duration._
 
+/**
+  * Example test files are based on https://github.com/chaos-mesh/chaos-mesh/tree/master/examples
+  */
 object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
 
   val testPrinter = Printer.noSpacesSortKeys.copy(dropNullValues = true)
@@ -449,6 +452,30 @@ object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
   }
 
   test("jvm return") {
+    val experiment =
+      JvmChaos(
+        metadata = ResourceMetadata(
+          name = "return",
+        ),
+        spec = JvmChaos
+          .Spec(
+            action = Action.JvmChaos.Return(
+              `class` = "Main",
+              method = "getnum",
+              value = "9999",
+            ),
+            mode = Mode.All,
+            selector = Selectors()
+              .withByNamespaces("helloworld"),
+          ),
+      )
+    testEncodingDecoding[JvmChaos.Spec, JvmChaos](
+      "jvm-return.yaml",
+      experiment,
+    )
+  }
+
+  test("jvm rule data") {
     val experiment =
       JvmChaos(
         metadata = ResourceMetadata(
