@@ -3,7 +3,6 @@ package com.evolutiongaming.chaosmesh.circe
 import cats.effect.IO
 import cats.effect.kernel.Sync
 import cats.syntax.all._
-import com.evolutiongaming.chaosmesh.circe.common.DurationInstances
 import com.evolutiongaming.chaosmesh.circe.instances._
 import com.evolutiongaming.chaosmesh.model.dnschaos.DnsChaos
 import com.evolutiongaming.chaosmesh.model.httpchaos.HttpChaos
@@ -24,7 +23,7 @@ import com.evolutiongaming.chaosmesh.model.stresschaos.StressChaos
 /**
   * Example test files are based on https://github.com/chaos-mesh/chaos-mesh/tree/master/examples
   */
-object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
+object EncoderDecoderSuite extends SimpleIOSuite {
 
   val testPrinter = Printer.noSpacesSortKeys.copy(dropNullValues = true)
 
@@ -42,7 +41,7 @@ object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
     } yield expect(parsed == expected)
     test.handleError(err => failure(s"exception happened on decoding $err"))
   }
-  import com.evolutiongaming.chaosmesh.circe.common.CirceOps._
+
   private def testEncoding[Spec: Encoder](
     filename: String,
     toEncode: CustomResource[Spec, ExperimentKind],
