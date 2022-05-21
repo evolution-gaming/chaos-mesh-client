@@ -17,6 +17,15 @@ object JvmChaos {
     * Simulates the faults of JVM application through Byteman
     * see https://github.com/chaos-mesh/byteman
     * 
+    * NOTE:
+    * In jvm return experiment definition of experiment
+    * on chaos-mesh side expect to contain "value" key field
+    * in top level of spec object,
+    * however to specify Fixed, FixedPercent or RandomMaxPercent
+    * "value" field in top level of spec is also required,
+    * so those modes cannot be defined correctly for
+    * jvm return experiment
+    * 
     * @param action - Indicates the specific fault type
     * See [[com.evolutiongaming.chaosmesh.model.spec.Action.JvmChaos]] subtypes
     * @param mode - Specifies the mode of the experiment

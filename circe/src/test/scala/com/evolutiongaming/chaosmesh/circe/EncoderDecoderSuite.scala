@@ -3,22 +3,22 @@ package com.evolutiongaming.chaosmesh.circe
 import cats.effect.IO
 import cats.effect.kernel.Sync
 import cats.syntax.all._
+import com.evolutiongaming.chaosmesh.circe.common.DurationInstances
 import com.evolutiongaming.chaosmesh.circe.instances._
+import com.evolutiongaming.chaosmesh.model.dnschaos.DnsChaos
+import com.evolutiongaming.chaosmesh.model.httpchaos.HttpChaos
+import com.evolutiongaming.chaosmesh.model.iochaos.IoChaos
+import com.evolutiongaming.chaosmesh.model.jvmchaos.JvmChaos
 import com.evolutiongaming.chaosmesh.model.k8s._
+import com.evolutiongaming.chaosmesh.model.networkchaos.NetChaos
 import com.evolutiongaming.chaosmesh.model.podchaos.PodChaos
 import com.evolutiongaming.chaosmesh.model.spec._
+import com.evolutiongaming.chaosmesh.model.timechaos.TimeChaos
 import io.circe._
 import io.circe.syntax._
 import weaver._
 
 import scala.concurrent.duration._
-import com.evolutiongaming.chaosmesh.model.networkchaos.NetChaos
-import com.evolutiongaming.chaosmesh.model.httpchaos.HttpChaos
-import com.evolutiongaming.chaosmesh.model.iochaos.IoChaos
-import com.evolutiongaming.chaosmesh.model.dnschaos.DnsChaos
-import com.evolutiongaming.chaosmesh.circe.common.DurationInstances
-import com.evolutiongaming.chaosmesh.model.timechaos.TimeChaos
-import com.evolutiongaming.chaosmesh.model.jvmchaos.JvmChaos
 
 object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
 
@@ -444,6 +444,30 @@ object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
       )
     testEncodingDecoding[JvmChaos.Spec, JvmChaos](
       "jvm-exception.yaml",
+      experiment,
+    )
+  }
+
+  test("jvm return") {
+    val experiment =
+      JvmChaos(
+        metadata = ResourceMetadata(
+          name = "return",
+        ),
+        spec = JvmChaos
+          .Spec(
+            action = Action.JvmChaos.Return(
+              `class` = "Main",
+              method = "getnum",
+              value = "9999",
+            ),
+            mode = Mode.All,
+            selector = Selectors()
+              .withByNamespaces("helloworld"),
+          ),
+      )
+    testEncodingDecoding[JvmChaos.Spec, JvmChaos](
+      "jvm-return.yaml",
       experiment,
     )
   }

@@ -18,8 +18,8 @@ trait JvmChaosInstances
 
   implicit val jvmChaosSpecEnc: Encoder.AsObject[JvmChaos.Spec] =
     deriveEncoder[JvmChaos.Spec]
-      .mapJsonObject(_.deepMergeObjInField(ActionsEncoding.ActionFieldKey))
       .mapJsonObject(_.deepMergeObjInField(ModeField))
+      .mapJsonObject(_.deepMergeObjInField(ActionsEncoding.ActionFieldKey))
 
   implicit val jvmChaosSpecDec: Decoder[JvmChaos.Spec] =
     for {
