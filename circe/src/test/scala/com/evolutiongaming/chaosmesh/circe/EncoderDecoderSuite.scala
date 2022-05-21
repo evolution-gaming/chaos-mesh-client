@@ -19,6 +19,7 @@ import io.circe.syntax._
 import weaver._
 
 import scala.concurrent.duration._
+import com.evolutiongaming.chaosmesh.model.stresschaos.StressChaos
 
 /**
   * Example test files are based on https://github.com/chaos-mesh/chaos-mesh/tree/master/examples
@@ -246,6 +247,59 @@ object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
     )
   }
 
+  test("cpu stress") {
+    val experiment =
+      StressChaos(
+        metadata = ResourceMetadata(
+          name = "burn-cpu",
+        ),
+        spec = StressChaos
+          .Spec(
+            mode = Mode.One,
+            selector = Selectors()
+              .withByLabels("app.kubernetes.io/component" -> "tikv"),
+            duration = 30.seconds,
+            stressors = StressChaos
+              .Stressors()
+              .withCpuStress(
+                StressChaos.CpuStressor(1, 100).withOptions("--cpu 2", "--timeout 600", "--hdd 1"),
+              ),
+          ),
+      )
+    testEncodingDecoding[StressChaos.Spec, StressChaos](
+      "burn-cpu.yaml",
+      experiment,
+    )
+  }
+
+  test("memory stress") {
+    val experiment =
+      StressChaos(
+        metadata = ResourceMetadata(
+          name = "pod-oom",
+        ),
+        spec = StressChaos
+          .Spec(
+            mode = Mode.One,
+            selector = Selectors()
+              .withByLabels("app.kubernetes.io/component" -> "tikv"),
+            duration = 30.seconds,
+            stressors = StressChaos
+              .Stressors()
+              .withMemoryStress(
+                StressChaos
+                  .MemoryStressor(1)
+                  .withOccupiedSize("10GB")
+                  .withOomScoreAdj(-1000),
+              ),
+          ),
+      )
+    testEncodingDecoding[StressChaos.Spec, StressChaos](
+      "cause-pod-oom.yaml",
+      experiment,
+    )
+  }
+
   test("io errno") {
     val experiment =
       IoChaos(
@@ -457,7 +511,8 @@ object EncoderDecoderSuite extends SimpleIOSuite with DurationInstances {
         spec = JvmChaos
           .Spec(
             action = Action.JvmChaos.RuleData(
-              ruleData = "RULE modify return value\nCLASS Main\nMETHOD getnum\nAT ENTRY\nIF true\nDO\n    return 9999\nENDRULE",
+              ruleData =
+                "RULE modify return value\nCLASS Main\nMETHOD getnum\nAT ENTRY\nIF true\nDO\n    return 9999\nENDRULE",
             ),
             mode = Mode.All,
             selector = Selectors()
