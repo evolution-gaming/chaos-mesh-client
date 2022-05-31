@@ -32,6 +32,11 @@ trait JvmChaosActionInstances extends DurationInstances {
 
   implicit val jvmMemOverflowDec: Decoder[JvmChaos.MemOverflow] = deriveDecoder
 
+  implicit val jvmStressEnc: Encoder.AsObject[JvmChaos.Stress] = Encoder.AsObject.instance {
+    case mem: JvmChaos.MemOverflow => mem.asJsonObject
+    case cpu: JvmChaos.CpuStress   => cpu.asJsonObject
+  }
+
   implicit val jvmStressDec: Decoder[JvmChaos.Stress] =
     jvmCpuStressDec.widen[JvmChaos.Stress] <+> jvmMemOverflowDec.widen[JvmChaos.Stress]
 
@@ -47,9 +52,7 @@ trait JvmChaosActionInstances extends DurationInstances {
         ret.asJsonObject.addType(ActionsEncoding.ActionFieldKey, "return")
       case ex: JvmChaos.Exception =>
         ex.asJsonObject.addType(ActionsEncoding.ActionFieldKey, "exception")
-      case stress: JvmChaos.CpuStress =>
-        stress.asJsonObject.addType(ActionsEncoding.ActionFieldKey, "stress")
-      case stress: JvmChaos.MemOverflow =>
+      case stress: JvmChaos.Stress =>
         stress.asJsonObject.addType(ActionsEncoding.ActionFieldKey, "stress")
       case JvmChaos.GC =>
         JsonObject.empty.addType(ActionsEncoding.ActionFieldKey, "gc")
