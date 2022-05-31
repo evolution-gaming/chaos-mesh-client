@@ -27,6 +27,7 @@ object TimeChaos {
     * @param containerNames - Specifies the name of the container into which the fault is injected
     * @param timeOffset - Specifies the length of time offset
     * @param clockIds - Specifies the ID of clock that will be offset.
+    * @param duration - Duration of experiment
     * see https://man7.org/linux/man-pages/man2/clock_gettime.2.html
     */
   final case class Spec(
