@@ -1,0 +1,13 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: JVMChaos
+metadata:
+  name: exception
+spec:
+  action: exception
+  class: Main
+  method: sayhello
+  exception: java.io.IOException("BOOM")
+  mode: all
+  selector:
+    namespaces:
+      - helloworld

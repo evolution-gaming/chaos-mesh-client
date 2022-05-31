@@ -1,0 +1,22 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: network-partition-example
+spec:
+  action: partition
+  mode: random-max-percent
+  value: "100"
+  selector:
+    labelSelectors:
+      "traffic": "output"
+  direction: to
+  target:
+    selector:
+      annotationSelectors:
+        "traffic": "input"
+    mode: one
+  externalTargets:
+    - "8.8.8.8"
+    - "www.google.com"
+    - "8.8.0.0/16"
+  duration: "10s"

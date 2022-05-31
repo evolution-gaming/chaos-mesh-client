@@ -1,0 +1,26 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: network-delay-example
+spec:
+  action: delay
+  mode: one
+  selector:
+    namespaces:
+      - web
+    labelSelectors:
+      "app.kubernetes.io/component": "web-app"
+  delay:
+    latency: "90ms"
+    correlation: "25"
+    jitter: "90ms"
+  direction: from
+  target:
+    selector:
+      namespaces:
+        - db
+        - storage
+      labelSelectors:
+        "app.kubernetes.io/component": "pool"
+    mode: all
+  duration: "10s"

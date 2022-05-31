@@ -1,0 +1,15 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: network-duplicate-example
+spec:
+  action: duplicate
+  mode: one
+  direction: to
+  selector:
+    labelSelectors:
+      "app.kubernetes.io/component": "tikv"
+  duplicate:
+    duplicate: "40"
+    correlation: "25"
+  duration: "10s"
