@@ -3,7 +3,7 @@ import sbt._
 object Dependencies {
 
   object K8s {
-    private val version  = "0.8.0"
+    private val version  = "0.8.1-2-0d89a0c-SNAPSHOT"
     val KubernetesClient = "com.goyeau" %% "kubernetes-client" % version
   }
 

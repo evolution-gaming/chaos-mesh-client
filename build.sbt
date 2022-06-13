@@ -21,6 +21,9 @@ inThisBuild(
           )
       }
     },
+    resolvers ++= Seq(
+      Resolver.sonatypeRepo("snapshots"),
+    ),
   ),
 )
 
