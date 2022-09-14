@@ -25,11 +25,9 @@ trait StatusInstances {
         reason = if (rawReasonStr.trim().isEmpty()) None else Some(rawReasonStr)
         status <- c
           .get[String](StatusKey)
-          .flatMap(
-            _.toBooleanOption
-              .liftTo[Try](new RuntimeException("Status field is incorrect"))
-              .toEither,
-          )
+          .flatMap { statusStr =>
+            Try(statusStr.toBoolean).toEither
+          }
           .left
           .map(err => DecodingFailure(err.getMessage(), c.history))
         result <- Condition

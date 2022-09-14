@@ -28,14 +28,14 @@ object Condition {
     reason: Option[String],
   ): F[Condition] =
     (name, status) match {
-      case (SelectedType, true)   => Selected.pure
-      case (SelectedType, false)  => NotSelected(reason).pure
-      case (InjectedType, true)   => AllInjected.pure
-      case (InjectedType, false)  => NotInjected(reason).pure
-      case (PausedType, false)    => Running.pure
-      case (PausedType, true)     => Paused(reason).pure
-      case (RecoveredType, false) => OngoingExperiment.pure
-      case (RecoveredType, true)  => Recovered(reason).pure
+      case (SelectedType, true)   => Selected.pure.widen
+      case (SelectedType, false)  => NotSelected(reason).pure.widen
+      case (InjectedType, true)   => AllInjected.pure.widen
+      case (InjectedType, false)  => NotInjected(reason).pure.widen
+      case (PausedType, false)    => Running.pure.widen
+      case (PausedType, true)     => Paused(reason).pure.widen
+      case (RecoveredType, false) => OngoingExperiment.pure.widen
+      case (RecoveredType, true)  => Recovered(reason).pure.widen
       case otherName =>
         UnknownConditionType(
           s"Condition with name $otherName cannot be created",
