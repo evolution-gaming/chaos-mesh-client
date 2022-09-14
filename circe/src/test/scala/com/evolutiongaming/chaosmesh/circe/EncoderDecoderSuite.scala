@@ -19,6 +19,11 @@ import io.circe.syntax._
 import weaver._
 
 import scala.concurrent.duration._
+import com.evolutiongaming.chaosmesh.model.status.Status.apply
+import com.evolutiongaming.chaosmesh.model.status.Status
+import com.evolutiongaming.chaosmesh.model.status.ExperimentStatus
+import com.evolutiongaming.chaosmesh.model.status.ContainerRecord
+import com.evolutiongaming.chaosmesh.model.status.Condition
 
 /**
   * Example test files are based on https://github.com/chaos-mesh/chaos-mesh/tree/master/examples
@@ -579,6 +584,50 @@ object EncoderDecoderSuite extends SimpleIOSuite {
       "http-abort-failure.yaml",
       experiment,
     )
+  }
+
+  test("status decoding") {
+    val testStatus = Status(
+      conditions = List(
+        Condition.Selected,
+        Condition.NotInjected(None),
+        Condition.OngoingExperiment,
+        Condition.Running,
+      ),
+      experiment = ExperimentStatus(
+        containerRecords = List(
+          ContainerRecord(
+            "dyn-20220913103216-c04/testkit-487e4b5b-98ed-496d-9bec-342e42e64794-78b87dcd9c-2pvk9",
+            "Not Injected/Wait",
+            ".",
+          ),
+          ContainerRecord(
+            "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-jhsjw",
+            "Not Injected/Wait",
+            ".Target",
+          ),
+          ContainerRecord(
+            "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-hmrlx",
+            "Not Injected/Wait",
+            ".Target",
+          ),
+        ),
+        desiredPhase = "Run",
+      ),
+      instances = Map(
+        "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-hmrlx"         -> 1,
+        "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-jhsjw"         -> 1,
+        "dyn-20220913103216-c04/testkit-487e4b5b-98ed-496d-9bec-342e42e64794-78b87dcd9c-2pvk9" -> 2,
+      ),
+    )
+    for {
+      json <- Sync[IO].fromEither {
+        io.circe.parser.parse(
+          scala.io.Source.fromURL(getClass.getResource("/status.json")).mkString,
+        )
+      }
+      decoded <- IO.fromEither(json.as[Status])
+    } yield expect(testStatus == decoded)
   }
 
 }

@@ -5,43 +5,45 @@ import com.evolutiongaming.chaosmesh.model._
 import com.evolutiongaming.chaosmesh.model.k8s.Api
 import com.goyeau.kubernetes.client.KubernetesClient
 import com.goyeau.kubernetes.client.crd.CrdContext
+import io.circe.Json
 
 import ChaosMeshApi._
+import com.evolutiongaming.chaosmesh.model.status.Status
 
 class ChaosMeshApi[F[_]](client: KubernetesClient[F]) {
 
   lazy val pod =
-    client.customResources[podchaos.PodChaos.Spec, Unit](podChaosContext)
+    client.customResources[podchaos.PodChaos.Spec, Status](podChaosContext)
 
   lazy val network =
-    client.customResources[networkchaos.NetChaos.Spec, Unit](networkChaosContext)
+    client.customResources[networkchaos.NetChaos.Spec, Status](networkChaosContext)
 
   lazy val stress =
-    client.customResources[stresschaos.StressChaos.Spec, Unit](stressChaosContext)
+    client.customResources[stresschaos.StressChaos.Spec, Status](stressChaosContext)
 
   lazy val io =
-    client.customResources[iochaos.IoChaos.Spec, Unit](ioChaosContext)
+    client.customResources[iochaos.IoChaos.Spec, Status](ioChaosContext)
 
   lazy val dns =
-    client.customResources[dnschaos.DnsChaos.Spec, Unit](dnsChaosContext)
+    client.customResources[dnschaos.DnsChaos.Spec, Status](dnsChaosContext)
 
   lazy val time =
-    client.customResources[timechaos.TimeChaos.Spec, Unit](timeChaosContext)
+    client.customResources[timechaos.TimeChaos.Spec, Status](timeChaosContext)
 
   lazy val jvm =
-    client.customResources[jvmchaos.JvmChaos.Spec, Unit](jvmChaosContext)
+    client.customResources[jvmchaos.JvmChaos.Spec, Status](jvmChaosContext)
 
   lazy val kernel =
-    client.customResources[kernelchaos.KernelChaos.Spec, Unit](kernelChaosContext)
+    client.customResources[kernelchaos.KernelChaos.Spec, Status](kernelChaosContext)
 
   lazy val aws =
-    client.customResources[awschaos.AwsChaos.Spec, Unit](awsChaosContext)
+    client.customResources[awschaos.AwsChaos.Spec, Status](awsChaosContext)
 
   lazy val gcp =
-    client.customResources[gcpchaos.GcpChaos.Spec, Unit](gcpChaosContext)
+    client.customResources[gcpchaos.GcpChaos.Spec, Status](gcpChaosContext)
 
   lazy val http =
-    client.customResources[httpchaos.HttpChaos.Spec, Unit](httpChaosContext)
+    client.customResources[httpchaos.HttpChaos.Spec, Status](httpChaosContext)
 
 }
 
