@@ -12,6 +12,7 @@ import com.evolutiongaming.chaosmesh.circe.networkchaos._
 import com.evolutiongaming.chaosmesh.circe.podchaos._
 import com.evolutiongaming.chaosmesh.circe.stresschaos._
 import com.evolutiongaming.chaosmesh.circe.timechaos._
+import com.evolutiongaming.chaosmesh.circe.status._
 
 object instances
     extends CustomResourceInstances
@@ -26,3 +27,4 @@ object instances
     with AwsChaosInstances
     with GcpChaosInstances
     with HttpChaosInstances
+    with StatusInstances

@@ -1,0 +1,49 @@
+{
+    "conditions": [
+        {
+            "reason": "",
+            "status": "True",
+            "type": "Selected"
+        },
+        {
+            "reason": "",
+            "status": "False",
+            "type": "AllInjected"
+        },
+        {
+            "reason": "",
+            "status": "False",
+            "type": "AllRecovered"
+        },
+        {
+            "reason": "",
+            "status": "False",
+            "type": "Paused"
+        }
+    ],
+    "experiment": {
+        "containerRecords": [
+            {
+                "id": "dyn-20220913103216-c04/testkit-487e4b5b-98ed-496d-9bec-342e42e64794-78b87dcd9c-2pvk9",
+                "phase": "Not Injected/Wait",
+                "selectorKey": "."
+            },
+            {
+                "id": "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-jhsjw",
+                "phase": "Not Injected/Wait",
+                "selectorKey": ".Target"
+            },
+            {
+                "id": "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-hmrlx",
+                "phase": "Not Injected/Wait",
+                "selectorKey": ".Target"
+            }
+        ],
+        "desiredPhase": "Run"
+    },
+    "instances": {
+        "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-hmrlx": 1,
+        "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-jhsjw": 1,
+        "dyn-20220913103216-c04/testkit-487e4b5b-98ed-496d-9bec-342e42e64794-78b87dcd9c-2pvk9": 2
+    }
+}

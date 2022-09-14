@@ -8,7 +8,7 @@ object Dependencies {
   }
 
   object Cats {
-    private val version = "2.7.0"
+    private val version = "2.8.0"
     val Core            = "org.typelevel" %% "cats-core" % version
   }
 
@@ -21,7 +21,7 @@ object Dependencies {
   }
 
   object Testing {
-    val WeaverCats = "com.disneystreaming" %% "weaver-cats" % "0.7.11" % Test
+    val WeaverCats = "com.disneystreaming" %% "weaver-cats" % "0.7.15" % Test
   }
 
 }
