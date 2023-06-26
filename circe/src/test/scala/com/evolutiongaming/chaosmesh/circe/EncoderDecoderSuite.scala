@@ -361,7 +361,7 @@ object EncoderDecoderSuite extends SimpleIOSuite {
         ),
         spec = IoChaos
           .Spec(
-            action = Action.IoChaos.AttrOverride().withPermission(72),
+            action = Action.IoChaos.AttrOverride.empty.withPermission(72),
             mode = Mode.One,
             selector = Selectors()
               .withByLabels("app" -> "etcd"),
