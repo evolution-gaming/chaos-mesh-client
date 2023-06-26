@@ -33,7 +33,7 @@ object Action {
       *
       * @param containerNames - Target containers
       */
-    case class ContainerKill private[chaosmesh](
+    case class ContainerKill private[chaosmesh] (
       containerNames: NonEmptyList[String],
     ) extends PodChaos
         with Attributes.HasTargetContainers[Id]
@@ -102,7 +102,7 @@ object Action {
         limit:  Long,
         buffer: Int,
       ): BandwidthLimit =
-        BandwidthLimit(BandwidthLimitRules(s"${rate}bps", limit, buffer))
+        BandwidthLimit(BandwidthLimitRules(s"${rate}bps", limit, buffer, None, None))
     }
 
     /**
@@ -118,8 +118,8 @@ object Action {
       rate:     String,
       limit:    Long,
       buffer:   Int,
-      peakrate: Option[Long] = None,
-      minburst: Option[Int] = None,
+      peakrate: Option[Long],
+      minburst: Option[Int],
     )
 
     /**
@@ -128,8 +128,8 @@ object Action {
       * 
       * @param loss - Indicates packet lost fault rules
       */
-    final case class PacketLoss private[chaosmesh](
-      loss: PacketLossRules = PacketLossRules(),
+    final case class PacketLoss private[chaosmesh] (
+      loss: PacketLossRules = PacketLossRules(None, None),
     ) extends NetChaos {
 
       /**
@@ -159,8 +159,8 @@ object Action {
       * of current packet loss and the previous time's packet loss 0..100
       */
     final case class PacketLossRules private[spec] (
-      loss:        Option[String] = None,
-      correlation: Option[String] = None,
+      loss:        Option[String],
+      correlation: Option[String],
     )
 
     /**
@@ -169,8 +169,8 @@ object Action {
       *
       * @param corrupt - Indicates packet corrupt rules 
       */
-    final case class PacketCorrupt private[chaosmesh](
-      corrupt: PacketCorruptRules = PacketCorruptRules(),
+    final case class PacketCorrupt private[chaosmesh] (
+      corrupt: PacketCorruptRules = PacketCorruptRules(None, None),
     ) extends NetChaos {
 
       /**
@@ -200,8 +200,8 @@ object Action {
       * of current packet corruption and the previous time's packet corruption 0..100
       */
     final case class PacketCorruptRules private[spec] (
-      corrupt:     Option[String] = None,
-      correlation: Option[String] = None,
+      corrupt:     Option[String],
+      correlation: Option[String],
     )
 
     /**
@@ -210,8 +210,8 @@ object Action {
       *
       * @param delay - Indicates delay rules
       */
-    final case class Delay private[chaosmesh](
-      delay: DelayRules = DelayRules(),
+    final case class Delay private[chaosmesh] (
+      delay: DelayRules = DelayRules(None, None, None, None),
     ) extends NetChaos {
 
       /**
@@ -258,7 +258,7 @@ object Action {
         updateReordering(_.copy(gap = gap.some))
 
       private def updateReordering(f: PacketReorder => PacketReorder) = {
-        val updated = delay.reorder.fold(PacketReorder())(f)
+        val updated = delay.reorder.fold(PacketReorder(None, None, None))(f)
         Delay(delay.copy(reorder = updated.some))
       }
 
@@ -273,10 +273,10 @@ object Action {
       * @param reorder - Indicates packet reordering fault rules
       */
     final case class DelayRules private[spec] (
-      latency:     Option[FiniteDuration] = None,
-      correlation: Option[String] = None,
-      jitter:      Option[FiniteDuration] = None,
-      reorder:     Option[PacketReorder] = None,
+      latency:     Option[FiniteDuration],
+      correlation: Option[String],
+      jitter:      Option[FiniteDuration],
+      reorder:     Option[PacketReorder],
     )
 
     /**
@@ -288,9 +288,9 @@ object Action {
       * @param gap - Indicates the gap before and after packet reordering
       */
     final case class PacketReorder private[spec] (
-      reorder:     Option[String] = None,
-      correlation: Option[String] = None,
-      gap:         Option[Int] = None,
+      reorder:     Option[String],
+      correlation: Option[String],
+      gap:         Option[Int],
     )
 
     /**
@@ -299,8 +299,8 @@ object Action {
       *
       * @param duplicate - Indicates packet duplicate rules 
       */
-    final case class PacketDuplicate private[chaosmesh](
-      duplicate: PacketDuplicateRules = PacketDuplicateRules(),
+    final case class PacketDuplicate private[chaosmesh] (
+      duplicate: PacketDuplicateRules = PacketDuplicateRules(None, None),
     ) extends NetChaos {
 
       /**
@@ -331,8 +331,8 @@ object Action {
       * of current packet duplicating and the previous time's packet duplicating 0..100
       */
     final case class PacketDuplicateRules private[spec] (
-      duplicate:   Option[String] = None,
-      correlation: Option[String] = None,
+      duplicate:   Option[String],
+      correlation: Option[String],
     )
 
   }
@@ -365,8 +365,8 @@ object Action {
       *
       * @param attr - Specific property override rules
       */
-    final case class AttrOverride private[chaosmesh](
-      attr: AttrOverrideRules = AttrOverrideRules(),
+    final case class AttrOverride private[chaosmesh] (
+      attr: AttrOverrideRules,
     ) extends IoChaos {
 
       /**
@@ -458,6 +458,10 @@ object Action {
         copy(attr = f(attr))
     }
 
+    object AttrOverride {
+      def empty = AttrOverride(attr = AttrOverrideRules.empty)
+    }
+
     /**
       * Contains file properties override rules
       * 
@@ -475,31 +479,48 @@ object Action {
       * @param rdev - Device ID
       */
     final case class AttrOverrideRules private[spec] (
-      ino:    Option[Int] = None,
-      size:   Option[Int] = None,
-      blocks: Option[Int] = None,
-      atime:  Option[TimeSpec] = None,
-      mtime:  Option[TimeSpec] = None,
-      ctime:  Option[TimeSpec] = None,
-      kind:   Option[String] = None,
-      perm:   Option[Int] = None,
-      nlink:  Option[Int] = None,
-      uid:    Option[Int] = None,
-      gid:    Option[Int] = None,
-      rdev:   Option[Int] = None,
+      ino:    Option[Int],
+      size:   Option[Int],
+      blocks: Option[Int],
+      atime:  Option[TimeSpec],
+      mtime:  Option[TimeSpec],
+      ctime:  Option[TimeSpec],
+      kind:   Option[String],
+      perm:   Option[Int],
+      nlink:  Option[Int],
+      uid:    Option[Int],
+      gid:    Option[Int],
+      rdev:   Option[Int],
     ) {
       private[spec] def atimeUpdate(f: TimeSpec => TimeSpec) = {
-        val updated = atime.fold(TimeSpec())(f)
+        val updated = atime.fold(TimeSpec(None, None))(f)
         copy(atime = updated.some)
       }
       private[spec] def mtimeUpdate(f: TimeSpec => TimeSpec) = {
-        val updated = mtime.fold(TimeSpec())(f)
+        val updated = mtime.fold(TimeSpec(None, None))(f)
         copy(mtime = updated.some)
       }
       private[spec] def ctimeUpdate(f: TimeSpec => TimeSpec) = {
-        val updated = ctime.fold(TimeSpec())(f)
+        val updated = ctime.fold(TimeSpec(None, None))(f)
         copy(ctime = updated.some)
       }
+    }
+
+    object AttrOverrideRules {
+      def empty = AttrOverrideRules(
+        ino = None,
+        size = None,
+        blocks = None,
+        atime = None,
+        mtime = None,
+        ctime = None,
+        kind = None,
+        perm = None,
+        nlink = None,
+        uid = None,
+        gid = None,
+        rdev = None,
+      )
     }
 
     /**
@@ -509,9 +530,9 @@ object Action {
       * @param nsec - timestamp in nanoseconds
       * For the specific meaning of parameters, you can refer to man stat
       */
-    final case class TimeSpec private[spec](
-      sec:  Option[Long] = None,
-      nsec: Option[Long] = None,
+    final case class TimeSpec private[spec] (
+      sec:  Option[Long],
+      nsec: Option[Long],
     )
 
     /**
@@ -519,7 +540,7 @@ object Action {
       * 
       * @param mistake - Specific error rules
       */
-    final case class Mistake private[chaosmesh](
+    final case class Mistake private[chaosmesh] (
       mistake: MistakeRules,
     ) extends IoChaos
 
