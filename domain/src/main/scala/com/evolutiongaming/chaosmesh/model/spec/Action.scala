@@ -22,10 +22,10 @@ object Action {
     /**
       * Kills a specified Pod
       *
-      * @param gracePeriod - Duration before deleting Pod
+      * @param gracePeriod - Duration in seconds before deleting Pod
       */
     case class PodKill(
-      gracePeriod: FiniteDuration,
+      gracePeriod: Long,
     ) extends PodChaos
 
     /**
