@@ -97,7 +97,7 @@ object EncoderDecoderSuite extends SimpleIOSuite {
           name = "pod-kill-example",
         ),
         spec = PodChaos.Spec(
-          action = Action.PodChaos.PodKill(550.milli),
+          action = Action.PodChaos.PodKill(25),
           mode = Mode.Fixed(5),
           duration = 30.seconds,
           selector = Selectors().withByLabels("app.kubernetes.io/component" -> "tikv"),
