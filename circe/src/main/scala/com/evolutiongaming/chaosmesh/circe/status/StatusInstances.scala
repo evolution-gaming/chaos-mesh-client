@@ -1,21 +1,22 @@
 package com.evolutiongaming.chaosmesh.circe.status
 
-import io.circe.{Decoder, Encoder}
-import com.evolutiongaming.chaosmesh.model.status._
-import scala.util.Try
-import io.circe.DecodingFailure.apply
-import io.circe.DecodingFailure
-import io.circe.generic.semiauto._
-import io.circe.JsonObject
 import com.evolutiongaming.chaosmesh.model.status.Condition._
-import io.circe.Json
-import cats.syntax.all._
+import com.evolutiongaming.chaosmesh.model.status._
+import io.circe.generic.semiauto._
+import io.circe._
+
+import scala.util.Try
 
 trait StatusInstances {
 
-  val ConditionTypeKey = "type"
-  val ReasonKey        = "reason"
-  val StatusKey        = "status"
+  val ConditionTypeKey    = "type"
+  val ReasonKey           = "reason"
+  val StatusKey           = "status"
+  val ConditionsListKey   = "conditions"
+  val InstancesKey        = "instances"
+  val ExperimentKey       = "experiment"
+  val ContainerRecordsKey = "containerRecords"
+  val DesiredPhaseKey     = "desiredPhase"
 
   implicit val conditionDec: Decoder[Condition] =
     Decoder.instance { c =>
@@ -61,11 +62,29 @@ trait StatusInstances {
 
   implicit val containerRecordEnc: Encoder[ContainerRecord] = deriveEncoder
 
-  implicit val experimentStatusDec: Decoder[ExperimentStatus] = deriveDecoder
+  implicit val experimentStatusDec: Decoder[ExperimentStatus] = Decoder.instance { c =>
+    for {
+      containerRecords <- c.get[Option[List[ContainerRecord]]](ContainerRecordsKey)
+      desiredPhase     <- c.get[String](DesiredPhaseKey)
+    } yield ExperimentStatus(
+      containerRecords = containerRecords.getOrElse(List.empty),
+      desiredPhase = desiredPhase,
+    )
+  }
 
   implicit val experimentStatusEnc: Encoder[ExperimentStatus] = deriveEncoder
 
-  implicit val statusDec: Decoder[Status] = deriveDecoder
+  implicit val statusDec: Decoder[Status] = Decoder.instance { c =>
+    for {
+      conditionsList <- c.get[Option[List[Condition]]](ConditionsListKey)
+      instances      <- c.get[Option[Map[String, Int]]](InstancesKey)
+      experiment     <- c.get[ExperimentStatus](ExperimentKey)
+    } yield Status(
+      conditions = conditionsList.getOrElse(List.empty),
+      instances = instances.getOrElse(Map.empty),
+      experiment = experiment,
+    )
+  }
 
   implicit val statusEnc: Encoder[Status] = deriveEncoder
 
