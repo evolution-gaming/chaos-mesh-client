@@ -10,13 +10,15 @@ import com.evolutiongaming.chaosmesh.model.spec.Direction
 import io.circe._
 import io.circe.generic.semiauto._
 import io.circe.syntax._
+import com.evolutiongaming.chaosmesh.circe.common.OptionalInfDurationInstances
 
 trait NetworkChaosInstances
     extends NetworkChaosActionInstances
     with ModeInstances
     with SelectorsInstances
     with ExperimentKindInstances
-    with ResourceMetadataInstances {
+    with ResourceMetadataInstances
+    with OptionalInfDurationInstances {
 
   protected val DirectionField = "direction"
 

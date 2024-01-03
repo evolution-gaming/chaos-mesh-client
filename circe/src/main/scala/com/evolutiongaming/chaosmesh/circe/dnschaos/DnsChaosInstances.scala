@@ -8,12 +8,14 @@ import io.circe._
 import io.circe.generic.semiauto._
 import io.circe.syntax._
 import com.evolutiongaming.chaosmesh.model.k8s.ExperimentKind
+import com.evolutiongaming.chaosmesh.circe.common.OptionalInfDurationInstances
 
 trait DnsChaosInstances
     extends DnsChaosActionInstances
     with ModeInstances
     with SelectorsInstances
     with ExperimentKindInstances
+    with OptionalInfDurationInstances
     with ResourceMetadataInstances {
 
   implicit val dnsChaosSpecEnc: Encoder.AsObject[DnsChaos.Spec] =

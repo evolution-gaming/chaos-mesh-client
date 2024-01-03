@@ -5,7 +5,7 @@ import com.evolutiongaming.chaosmesh.model.k8s._
 import com.evolutiongaming.chaosmesh.model.spec.Attributes._
 import com.evolutiongaming.chaosmesh.model.spec._
 import cats.data.NonEmptyList
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.Duration
 
 final case class NetChaos(
   metadata: ResourceMetadata,
@@ -26,6 +26,7 @@ object NetChaos {
     * @param selector - Specifies the target Pod
     * @param containerNames - Specifies the name of the container into which the fault is injected
     * @param device - Specifies the target network interface
+    * @param duration - Specifies the duration of the experiment, can be infinite
     */
   final case class Spec(
     action:         Action.NetChaos,
@@ -34,7 +35,7 @@ object NetChaos {
     selector:       Selectors[Selectors.Filled],
     containerNames: Option[NonEmptyList[String]] = None,
     device:         Option[String] = None,
-    duration:       FiniteDuration,
+    duration:       Duration = Duration.Inf,
   ) extends HasAction[Action.NetChaos]
       with HasMode
       with HasDirection[Option]

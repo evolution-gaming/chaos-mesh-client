@@ -36,7 +36,7 @@ object HttpChaos {
     *
     * @param mode - Specifies the mode of the experiment
     * @param selector - Specifies the target Pod
-    * @param duration - Duration of experiment
+    * @param duration - Duration of experiment, can be infinite
     * @param target - Specifies whether the target of fault injection is Request or Response
     * @param port - The TCP port that the target service listens on
     * @param path - The URI path of the target request. Supports Matching wildcards
@@ -55,7 +55,7 @@ object HttpChaos {
   final case class Spec(
     mode:           Mode,
     selector:       Selectors[Selectors.Filled],
-    duration:       FiniteDuration,
+    duration:       Duration = Duration.Inf,
     target:         HttpChaos.Target,
     port:           Int,
     path:           Option[String] = None,

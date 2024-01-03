@@ -5,7 +5,7 @@ import com.evolutiongaming.chaosmesh.model.k8s._
 import com.evolutiongaming.chaosmesh.model.spec.Attributes._
 import com.evolutiongaming.chaosmesh.model.spec._
 
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.Duration
 
 final case class AwsChaos(
   metadata: ResourceMetadata,
@@ -24,12 +24,12 @@ object AwsChaos {
     * @param secretName - Specifies the name of the Kubernetes Secret that stores the AWS authentication information
     * @param awsRegion - Specifies the AWS region
     * @param ec2Instance - Specifies the ID of the EC2 instance
-    * @param duration - Duration of experiment
+    * @param duration - Duration of experiment. Can be infinite
     */
   final case class Spec(
     action:      Action.AwsChaos,
     mode:        Mode,
-    duration:    FiniteDuration,
+    duration:    Duration = Duration.Inf,
     secretName:  Option[String] = None,
     awsRegion:   String,
     ec2Instance: String,

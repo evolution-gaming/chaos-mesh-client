@@ -6,6 +6,7 @@ import com.evolutiongaming.chaosmesh.model.k8s._
 import com.evolutiongaming.chaosmesh.model.spec.Attributes._
 import com.evolutiongaming.chaosmesh.model.spec._
 
+import scala.concurrent.duration.Duration
 import scala.concurrent.duration.FiniteDuration
 
 final case class TimeChaos(
@@ -27,15 +28,15 @@ object TimeChaos {
     * @param containerNames - Specifies the name of the container into which the fault is injected
     * @param timeOffset - Specifies the length of time offset
     * @param clockIds - Specifies the ID of clock that will be offset.
-    * @param duration - Duration of experiment
+    * @param duration - Duration of experiment, can be infinite
     * see https://man7.org/linux/man-pages/man2/clock_gettime.2.html
     */
   final case class Spec(
     mode:           Mode,
     selector:       Selectors[Selectors.Filled],
-    containerNames: Option[NonEmptyList[String]] = None,
     timeOffset:     FiniteDuration,
-    duration:       FiniteDuration,
+    containerNames: Option[NonEmptyList[String]] = None,
+    duration:       Duration = Duration.Inf,
     clockIds:       Option[NonEmptyList[String]] = None,
   ) extends HasMode
       with HasTargetContainers[Option]

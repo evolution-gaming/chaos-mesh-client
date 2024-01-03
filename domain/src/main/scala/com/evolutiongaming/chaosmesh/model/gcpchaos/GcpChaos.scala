@@ -5,7 +5,7 @@ import com.evolutiongaming.chaosmesh.model.k8s._
 import com.evolutiongaming.chaosmesh.model.spec.Attributes._
 import com.evolutiongaming.chaosmesh.model.spec._
 
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.Duration
 
 final case class GcpChaos(
   metadata: ResourceMetadata,
@@ -21,7 +21,7 @@ object GcpChaos {
     * @param action - Indicates the specific fault type.
     * See [[com.evolutiongaming.chaosmesh.model.spec.Action.GcpChaos]] subtypes
     * @param mode - Specifies the mode of the experiment
-    * @param duration - Duration of experiment
+    * @param duration - Duration of experiment. Can be infinite
     * @param secretName - Indicates the name of the Kubernetes secret that stores the GCP authentication information
     * @param project - Indicates the ID of GCP project
     * @param zone - Indicates the region of GCP instance
@@ -30,7 +30,7 @@ object GcpChaos {
   final case class Spec(
     action:     Action.GcpChaos,
     mode:       Mode,
-    duration:   FiniteDuration,
+    duration:   Duration = Duration.Inf,
     secretName: Option[String] = None,
     project:    Option[String] = None,
     zone:       Option[String] = None,

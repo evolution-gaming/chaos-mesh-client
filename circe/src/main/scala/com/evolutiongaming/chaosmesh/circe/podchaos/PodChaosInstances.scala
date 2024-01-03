@@ -14,7 +14,7 @@ trait PodChaosInstances
     extends PodChaosActionInstances
     with ModeInstances
     with SelectorsInstances
-    with DurationInstances
+    with OptionalInfDurationInstances
     with ExperimentKindInstances
     with ResourceMetadataInstances {
 

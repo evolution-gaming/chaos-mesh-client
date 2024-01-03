@@ -3,9 +3,9 @@ package com.evolutiongaming.chaosmesh.model.spec
 import cats.data.NonEmptyList
 import com.evolutiongaming.chaosmesh.model.spec._
 
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.Duration
 
-private [chaosmesh] object Attributes {
+private[chaosmesh] object Attributes {
 
   trait HasAction[A <: Action] {
     def action: A
@@ -16,7 +16,7 @@ private [chaosmesh] object Attributes {
   }
 
   trait HasDuration {
-    def duration: FiniteDuration
+    def duration: Duration
   }
 
   trait HasMode {
