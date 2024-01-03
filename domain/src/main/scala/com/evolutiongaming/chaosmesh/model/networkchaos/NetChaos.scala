@@ -34,14 +34,13 @@ object NetChaos {
     selector:       Selectors[Selectors.Filled],
     containerNames: Option[NonEmptyList[String]] = None,
     device:         Option[String] = None,
-    duration:       FiniteDuration,
+    duration:       Option[FiniteDuration],
   ) extends HasAction[Action.NetChaos]
       with HasMode
       with HasDirection[Option]
       with HasTargetContainers[Option]
       with HasSelectors
-      with HasTargetNetworkDevice[Option]
-      with HasDuration {
+      with HasTargetNetworkDevice[Option] {
 
     /**
       * Indicates the direction
