@@ -13,7 +13,7 @@ import io.circe.syntax._
 trait StressChaosInstances
     extends ModeInstances
     with SelectorsInstances
-    with DurationInstances
+    with OptionalInfDurationInstances
     with ExperimentKindInstances
     with ResourceMetadataInstances {
 

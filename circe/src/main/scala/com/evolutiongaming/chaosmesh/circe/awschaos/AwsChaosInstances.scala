@@ -13,7 +13,7 @@ import io.circe.syntax._
 trait AwsChaosInstances
     extends ModeInstances
     with SelectorsInstances
-    with DurationInstances
+    with OptionalInfDurationInstances
     with AwsActionInstances
     with ExperimentKindInstances
     with ResourceMetadataInstances {

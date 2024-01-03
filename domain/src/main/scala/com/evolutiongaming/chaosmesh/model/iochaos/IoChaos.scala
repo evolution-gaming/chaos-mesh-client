@@ -6,7 +6,7 @@ import com.evolutiongaming.chaosmesh.model.k8s._
 import com.evolutiongaming.chaosmesh.model.spec.Attributes._
 import com.evolutiongaming.chaosmesh.model.spec._
 
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.Duration
 
 final case class IoChaos(
   metadata: ResourceMetadata,
@@ -31,7 +31,7 @@ object IoChaos {
     * https://chaos-mesh.org/docs/simulate-io-chaos-on-kubernetes/#appendix-a-methods-type
     * @param percent - Probability of failure per operation, in % 0..100
     * @param containerName - Specifies the name of the container into which the fault is injected
-    * @param duration - Specifies the duration of the experiment
+    * @param duration - Specifies the duration of the experiment, can be infinite
     */
   final case class Spec(
     action:        Action.IoChaos,
@@ -42,7 +42,7 @@ object IoChaos {
     methods:       Option[NonEmptyList[String]] = None,
     percent:       Int = 100,
     containerName: Option[String] = None,
-    duration:      FiniteDuration,
+    duration:      Duration = Duration.Inf,
   ) extends HasAction[Action.IoChaos]
       with HasMode
       with HasSelectors

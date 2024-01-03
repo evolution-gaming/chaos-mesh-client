@@ -14,7 +14,7 @@ import io.circe.syntax._
 trait HttpChaosInstances
     extends ModeInstances
     with SelectorsInstances
-    with DurationInstances
+    with OptionalInfDurationInstances
     with ExperimentKindInstances
     with ResourceMetadataInstances {
 
@@ -28,19 +28,19 @@ trait HttpChaosInstances
 
   implicit val bodyDec: Decoder[HttpChaos.Body] =
     deriveDecoder[HttpChaos.Body] <+>
-    Decoder.decodeNone.map(_ => HttpChaos.Body())
+      Decoder.decodeNone.map(_ => HttpChaos.Body())
 
   implicit val patchEnc: Encoder[HttpChaos.Patch] = deriveEncoder
 
   implicit val patchDec: Decoder[HttpChaos.Patch] =
     deriveDecoder[HttpChaos.Patch] <+>
-    Decoder.decodeNone.map(_ => HttpChaos.Patch())
+      Decoder.decodeNone.map(_ => HttpChaos.Patch())
 
   implicit val replaceEnc: Encoder[HttpChaos.Replace] = deriveEncoder
 
   implicit val replaceDec: Decoder[HttpChaos.Replace] =
     deriveDecoder[HttpChaos.Replace] <+>
-    Decoder.decodeNone.map(_ => HttpChaos.Replace())
+      Decoder.decodeNone.map(_ => HttpChaos.Replace())
 
   implicit val requestReplaceEnc: Encoder[HttpChaos.RequestReplace] = deriveEncoder
 
@@ -52,7 +52,7 @@ trait HttpChaosInstances
 
   implicit val requestPatchDec: Decoder[HttpChaos.RequestPatch] =
     deriveDecoder[HttpChaos.RequestPatch] <+>
-    Decoder.decodeNone.map(_ => HttpChaos.RequestPatch())
+      Decoder.decodeNone.map(_ => HttpChaos.RequestPatch())
 
   implicit val responseReplaceEnc: Encoder[HttpChaos.ResponseReplace] =
     deriveEncoder[HttpChaos.ResponseReplace]

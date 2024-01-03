@@ -6,7 +6,7 @@ import com.evolutiongaming.chaosmesh.model.k8s._
 import com.evolutiongaming.chaosmesh.model.spec.Attributes._
 import com.evolutiongaming.chaosmesh.model.spec._
 
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.Duration
 
 final case class StressChaos(
   metadata: ResourceMetadata,
@@ -21,7 +21,7 @@ object StressChaos {
     *
     * @param mode - Specifies the mode of the experiment
     * @param selector - Specifies the target Pod
-    * @param duration - Duration of experiment
+    * @param duration - Duration of experiment, can be infinite
     * @param stressors - Specifies the stress of CPU or memory
     * @param stressngStressors - Specifies the stres-ng parameter to reach richer stress injection
     * @param containerNames - Specifies the name of the container into which the fault is injected
@@ -29,8 +29,8 @@ object StressChaos {
   final case class Spec(
     mode:              Mode,
     selector:          Selectors[Selectors.Filled],
-    duration:          FiniteDuration,
     stressors:         Stressors,
+    duration:          Duration = Duration.Inf,
     stressngStressors: Option[String] = None,
     containerNames:    Option[NonEmptyList[String]] = None,
   ) extends HasMode

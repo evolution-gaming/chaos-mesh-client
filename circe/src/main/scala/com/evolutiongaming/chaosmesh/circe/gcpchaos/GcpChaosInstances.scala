@@ -13,7 +13,7 @@ import com.evolutiongaming.chaosmesh.model.k8s.ExperimentKind
 trait GcpChaosInstances
     extends ModeInstances
     with SelectorsInstances
-    with DurationInstances
+    with OptionalInfDurationInstances
     with GcpChaosActionInstances
     with ExperimentKindInstances
     with ResourceMetadataInstances {

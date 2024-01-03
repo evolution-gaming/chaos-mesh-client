@@ -4,7 +4,7 @@ import com.evolutiongaming.chaosmesh.model.k8s._
 import com.evolutiongaming.chaosmesh.model.spec.Attributes._
 import com.evolutiongaming.chaosmesh.model.spec._
 
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration.Duration
 
 final case class PodChaos(
   metadata: ResourceMetadata,
@@ -21,13 +21,13 @@ object PodChaos {
     * See [[com.evolutiongaming.chaosmesh.model.spec.Action.PodChaos]] subtypes
     * @param mode - Specifies the mode of the experiment
     * @param selector - Specifies the target Pod
-    * @param duration - Duration of experiment
+    * @param duration - Specifies the duration of the experiment, can be infinite
     */
   final case class Spec(
     action:   Action.PodChaos,
     mode:     Mode,
     selector: Selectors[Selectors.Filled],
-    duration: FiniteDuration,
+    duration: Duration = Duration.Inf,
   ) extends HasAction[Action.PodChaos]
       with HasMode
       with HasSelectors

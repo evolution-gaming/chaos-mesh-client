@@ -14,7 +14,7 @@ trait IoChaosInstances
     extends IoChaosActionInstances
     with ModeInstances
     with SelectorsInstances
-    with DurationInstances
+    with OptionalInfDurationInstances
     with ExperimentKindInstances
     with ResourceMetadataInstances {
 
