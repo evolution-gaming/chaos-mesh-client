@@ -24,6 +24,7 @@ import com.evolutiongaming.chaosmesh.model.status.Status
 import com.evolutiongaming.chaosmesh.model.status.ExperimentStatus
 import com.evolutiongaming.chaosmesh.model.status.ContainerRecord
 import com.evolutiongaming.chaosmesh.model.status.Condition
+import com.evolutiongaming.chaosmesh.model.status.InstanceData
 
 /**
   * Example test files are based on https://github.com/chaos-mesh/chaos-mesh/tree/master/examples
@@ -615,9 +616,9 @@ object EncoderDecoderSuite extends SimpleIOSuite {
         desiredPhase = "Run",
       ),
       instances = Map(
-        "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-hmrlx"         -> 1,
-        "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-jhsjw"         -> 1,
-        "dyn-20220913103216-c04/testkit-487e4b5b-98ed-496d-9bec-342e42e64794-78b87dcd9c-2pvk9" -> 2,
+        "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-hmrlx"         -> InstanceData.IntValue(1),
+        "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-jhsjw"         -> InstanceData.IntValue(1),
+        "dyn-20220913103216-c04/testkit-487e4b5b-98ed-496d-9bec-342e42e64794-78b87dcd9c-2pvk9" -> InstanceData.IntValue(2),
       ),
     )
     for {
