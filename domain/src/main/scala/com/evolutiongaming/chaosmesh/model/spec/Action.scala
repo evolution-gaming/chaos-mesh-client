@@ -129,7 +129,7 @@ object Action {
       * @param loss - Indicates packet lost fault rules
       */
     final case class PacketLoss private[chaosmesh] (
-      loss: PacketLossRules = PacketLossRules(None, None),
+      loss: PacketLossRules,
     ) extends NetChaos {
 
       /**
@@ -151,6 +151,11 @@ object Action {
         copy(loss = f(loss))
     }
 
+    object PacketLoss {
+      def apply(): PacketLoss =
+        PacketLoss(PacketLossRules(None, None))
+    }
+
     /**
       * Indicates packet lost fault rules
       *
@@ -170,7 +175,7 @@ object Action {
       * @param corrupt - Indicates packet corrupt rules 
       */
     final case class PacketCorrupt private[chaosmesh] (
-      corrupt: PacketCorruptRules = PacketCorruptRules(None, None),
+      corrupt: PacketCorruptRules,
     ) extends NetChaos {
 
       /**
@@ -192,6 +197,11 @@ object Action {
 
     }
 
+    object PacketCorrupt {
+      def apply(): PacketCorrupt =
+        PacketCorrupt(PacketCorruptRules(None, None))
+    }
+
     /**
       * Indicates packet corrupt rules
       *
@@ -211,7 +221,7 @@ object Action {
       * @param delay - Indicates delay rules
       */
     final case class Delay private[chaosmesh] (
-      delay: DelayRules = DelayRules(None, None, None, None),
+      delay: DelayRules,
     ) extends NetChaos {
 
       /**
@@ -264,6 +274,11 @@ object Action {
 
     }
 
+    object Delay {
+      def apply(): Delay =
+        Delay(DelayRules(None, None, None, None))
+    }
+
     /**
       * Indicates network delay fault
       *
@@ -300,7 +315,7 @@ object Action {
       * @param duplicate - Indicates packet duplicate rules 
       */
     final case class PacketDuplicate private[chaosmesh] (
-      duplicate: PacketDuplicateRules = PacketDuplicateRules(None, None),
+      duplicate: PacketDuplicateRules,
     ) extends NetChaos {
 
       /**
@@ -321,6 +336,11 @@ object Action {
       private def updateRules(f: PacketDuplicateRules => PacketDuplicateRules) =
         copy(duplicate = f(duplicate))
 
+    }
+
+    object PacketDuplicate {
+      def apply(): PacketDuplicate =
+        PacketDuplicate(PacketDuplicateRules(None, None))
     }
 
     /**
