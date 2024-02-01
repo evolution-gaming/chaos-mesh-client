@@ -74,10 +74,22 @@ trait StatusInstances {
 
   implicit val experimentStatusEnc: Encoder[ExperimentStatus] = deriveEncoder
 
+  implicit val instanceDataWithStartTime: Decoder[InstanceData.StartTimeData] =
+    deriveDecoder
+
+  implicit val instanceDataDec: Decoder[InstanceData] =
+    Decoder.decodeInt
+      .map(InstanceData.IntValue(_))
+      .or(instanceDataWithStartTime.map[InstanceData](identity))
+      .or(Decoder.failedWithMessage[InstanceData]("not known type of InstanceData"))
+
+  implicit val instanceDataEnc: Encoder[InstanceData] =
+    Encoder.encodeNone.contramap(_ => None)
+
   implicit val statusDec: Decoder[Status] = Decoder.instance { c =>
     for {
       conditionsList <- c.get[Option[List[Condition]]](ConditionsListKey)
-      instances      <- c.get[Option[Map[String, Int]]](InstancesKey)
+      instances      <- c.get[Option[Map[String, InstanceData]]](InstancesKey)
       experiment     <- c.get[ExperimentStatus](ExperimentKey)
     } yield Status(
       conditions = conditionsList.getOrElse(List.empty),
