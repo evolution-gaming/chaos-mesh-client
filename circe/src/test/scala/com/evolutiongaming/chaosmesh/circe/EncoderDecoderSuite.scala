@@ -613,7 +613,7 @@ object EncoderDecoderSuite extends SimpleIOSuite {
             ".Target",
           ),
         ),
-        desiredPhase = "Run",
+        desiredPhase = Some("Run"),
       ),
       instances = Map(
         "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-hmrlx"         -> InstanceData.IntValue(1),

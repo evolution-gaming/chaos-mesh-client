@@ -65,7 +65,7 @@ trait StatusInstances {
   implicit val experimentStatusDec: Decoder[ExperimentStatus] = Decoder.instance { c =>
     for {
       containerRecords <- c.get[Option[List[ContainerRecord]]](ContainerRecordsKey)
-      desiredPhase     <- c.get[String](DesiredPhaseKey)
+      desiredPhase     <- c.get[Option[String]](DesiredPhaseKey)
     } yield ExperimentStatus(
       containerRecords = containerRecords.getOrElse(List.empty),
       desiredPhase = desiredPhase,
