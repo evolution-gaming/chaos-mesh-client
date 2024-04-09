@@ -22,8 +22,8 @@ trait StatusInstances {
     Decoder.instance { c =>
       for {
         cType        <- c.get[String](ConditionTypeKey)
-        rawReasonStr <- c.get[String](ReasonKey)
-        reason = if (rawReasonStr.trim().isEmpty()) None else Some(rawReasonStr)
+        rawReasonStr <- c.get[Option[String]](ReasonKey)
+        reason = rawReasonStr.map(_.trim()).filter(_.nonEmpty)
         status <- c
           .get[String](StatusKey)
           .flatMap { statusStr =>
