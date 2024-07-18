@@ -2,10 +2,10 @@ import Dependencies._
 
 inThisBuild(
   Seq(
-    homepage             := Some(new URL("https://github.com/evolution-gaming/chaos-mesh-client")),
+    homepage             := Some(url("https://github.com/evolution-gaming/chaos-mesh-client")),
     organization         := "com.evolutiongaming",
     organizationName     := "Evolution",
-    organizationHomepage := Some(url("http://evolution.com")),
+    organizationHomepage := Some(url("https://evolution.com")),
     startYear            := Some(2022),
     licenses             := Seq(("MIT", url("https://opensource.org/licenses/MIT"))),
     crossScalaVersions   := Seq("2.13.11", "3.3.0"),
@@ -36,6 +36,12 @@ lazy val commonSettings = Seq(
   ),
 )
 
+val alias: Seq[sbt.Def.Setting[?]] =
+  //  addCommandAlias("check", "all versionPolicyCheck Compile/doc") ++
+  addCommandAlias("check", "show version") ++
+    addCommandAlias("build", "+all compile test")
+
+
 lazy val root = project
   .in(file("."))
   .settings(
@@ -44,6 +50,7 @@ lazy val root = project
     publish / skip  := true,
     publishArtifact := false,
   )
+  .settings(alias)
   .aggregate(
     domain,
     circe,
