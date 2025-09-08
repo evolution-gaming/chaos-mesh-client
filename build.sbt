@@ -8,7 +8,7 @@ inThisBuild(
     organizationHomepage := Some(url("https://evolution.com")),
     startYear            := Some(2022),
     licenses             := Seq(("MIT", url("https://opensource.org/licenses/MIT"))),
-    crossScalaVersions   := Seq("2.13.11", "3.3.0"),
+    crossScalaVersions   := Seq("2.13.16", "3.3.4"),
     versionScheme        := Some("semver-spec"),
     scalaVersion         := crossScalaVersions.value.head,
     publishTo            := Some(Resolver.evolutionReleases),
