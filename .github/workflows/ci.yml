@@ -14,13 +14,13 @@ jobs:
     strategy:
       matrix:
         scala:
-          - 2.13.11
-          - 3.3.0
+          - 2.13.16
+          - 3.3.4
 
     steps:
       - uses: actions/checkout@v2
 
-      - uses: coursier/cache-action@v5
+      - uses: coursier/cache-action@v6
 
       - name: scala
         uses: olafurpg/setup-scala@v10
