@@ -17,6 +17,15 @@ trait StatusInstances {
   val ExperimentKey       = "experiment"
   val ContainerRecordsKey = "containerRecords"
   val DesiredPhaseKey     = "desiredPhase"
+  val IdKey               = "id"
+  val PhaseKey            = "phase"
+  val SelectorKeyKey      = "selectorKey"
+  val InjectedCountKey    = "injectedCount"
+  val RecoveredCountKey   = "recoveredCount"
+  val EventsKey           = "events"
+  val EventTypeKey        = "type"
+  val OperationKey        = "operation"
+  val TimestampKey        = "timestamp"
 
   implicit val conditionDec: Decoder[Condition] =
     Decoder.instance { c =>
@@ -58,9 +67,58 @@ trait StatusInstances {
     }
   }
 
-  implicit val containerRecordDec: Decoder[ContainerRecord] = deriveDecoder
+  implicit val containerRecordEventDec: Decoder[ContainerRecord.Event] =
+    Decoder.instance { c =>
+      for {
+        eventType <- c.get[String](EventTypeKey)
+        operation <- c.get[String](OperationKey)
+        timestamp <- c.get[java.time.Instant](TimestampKey)
+      } yield ContainerRecord.Event(
+        `type` = eventType,
+        operation = operation,
+        timestamp = timestamp,
+      )
+    }
 
-  implicit val containerRecordEnc: Encoder[ContainerRecord] = deriveEncoder
+  implicit val containerRecordEventEnc: Encoder[ContainerRecord.Event] =
+    Encoder.encodeJsonObject.contramap { event =>
+      JsonObject(
+        EventTypeKey -> Json.fromString(event.`type`),
+        OperationKey -> Json.fromString(event.operation),
+        TimestampKey -> Encoder[java.time.Instant].apply(event.timestamp),
+      )
+    }
+
+  implicit val containerRecordDec: Decoder[ContainerRecord] =
+    Decoder.instance { c =>
+      for {
+        id             <- c.get[String](IdKey)
+        phase          <- c.get[String](PhaseKey)
+        selectorKey    <- c.get[String](SelectorKeyKey)
+        injectedCount  <- c.getOrElse[Int](InjectedCountKey)(0)
+        recoveredCount <- c.getOrElse[Int](RecoveredCountKey)(0)
+        events         <- c.getOrElse[List[ContainerRecord.Event]](EventsKey)(Nil)
+      } yield ContainerRecord(
+        id = id,
+        phase = phase,
+        selectorKey = selectorKey,
+        injectedCount = injectedCount,
+        recoveredCount = recoveredCount,
+        events = events,
+      )
+    }
+
+  implicit val containerRecordEnc: Encoder[ContainerRecord] =
+    Encoder.encodeJsonObject.contramap { record =>
+      JsonObject(
+        IdKey             -> Json.fromString(record.id),
+        PhaseKey          -> Json.fromString(record.phase),
+        SelectorKeyKey    -> Json.fromString(record.selectorKey),
+        InjectedCountKey  -> Json.fromInt(record.injectedCount),
+        RecoveredCountKey -> Json.fromInt(record.recoveredCount),
+        EventsKey         -> Encoder[List[ContainerRecord.Event]].apply(record.events),
+      )
+    }
 
   implicit val experimentStatusDec: Decoder[ExperimentStatus] = Decoder.instance { c =>
     for {
