@@ -19,7 +19,7 @@ import io.circe.syntax._
 import weaver._
 
 import scala.concurrent.duration._
-import com.evolutiongaming.chaosmesh.model.status.Status.apply
+import java.time.Instant
 import com.evolutiongaming.chaosmesh.model.status.Status
 import com.evolutiongaming.chaosmesh.model.status.ExperimentStatus
 import com.evolutiongaming.chaosmesh.model.status.ContainerRecord
@@ -592,33 +592,81 @@ object EncoderDecoderSuite extends SimpleIOSuite {
       conditions = List(
         Condition.Selected,
         Condition.NotInjected(None),
-        Condition.OngoingExperiment,
+        Condition.Recovered(None),
         Condition.Running,
       ),
       experiment = ExperimentStatus(
         containerRecords = List(
           ContainerRecord(
-            "dyn-20220913103216-c04/testkit-487e4b5b-98ed-496d-9bec-342e42e64794-78b87dcd9c-2pvk9",
-            "Not Injected/Wait",
-            ".",
+            id = "20260422135804-e86/chaos-verify-nginx-85455dbb49-b9fn7",
+            phase = "Not Injected",
+            selectorKey = ".",
+            injectedCount = 1,
+            recoveredCount = 1,
+            events = List(
+              ContainerRecord.Event(
+                `type` = "Succeeded",
+                operation = "Apply",
+                timestamp = Instant.parse("2026-04-23T10:59:44Z"),
+              ),
+              ContainerRecord.Event(
+                `type` = "Succeeded",
+                operation = "Recover",
+                timestamp = Instant.parse("2026-04-23T11:00:43Z"),
+              ),
+            ),
           ),
           ContainerRecord(
-            "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-jhsjw",
-            "Not Injected/Wait",
-            ".Target",
+            id = "20260422135804-e86/chaos-verify-nginx-85455dbb49-rd8nv",
+            phase = "Not Injected",
+            selectorKey = ".Target",
+            injectedCount = 1,
+            recoveredCount = 1,
+            events = List(
+              ContainerRecord.Event(
+                `type` = "Succeeded",
+                operation = "Apply",
+                timestamp = Instant.parse("2026-04-23T10:59:45Z"),
+              ),
+              ContainerRecord.Event(
+                `type` = "Succeeded",
+                operation = "Recover",
+                timestamp = Instant.parse("2026-04-23T11:00:43Z"),
+              ),
+            ),
           ),
           ContainerRecord(
-            "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-hmrlx",
-            "Not Injected/Wait",
-            ".Target",
+            id = "20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j",
+            phase = "Not Injected",
+            selectorKey = ".Target",
+            injectedCount = 1,
+            recoveredCount = 1,
+            events = List(
+              ContainerRecord.Event("Succeeded", "Apply", Instant.parse("2026-04-23T10:59:46Z")),
+              ContainerRecord.Event("Failed", "Recover", Instant.parse("2026-04-23T11:00:43Z")),
+              ContainerRecord.Event("Failed", "Recover", Instant.parse("2026-04-23T11:00:43Z")),
+              ContainerRecord.Event("Failed", "Recover", Instant.parse("2026-04-23T11:00:43Z")),
+              ContainerRecord.Event("Failed", "Recover", Instant.parse("2026-04-23T11:00:44Z")),
+              ContainerRecord.Event("Failed", "Recover", Instant.parse("2026-04-23T11:00:44Z")),
+              ContainerRecord.Event("Failed", "Recover", Instant.parse("2026-04-23T11:00:44Z")),
+              ContainerRecord.Event("Failed", "Recover", Instant.parse("2026-04-23T11:00:44Z")),
+              ContainerRecord.Event("Failed", "Recover", Instant.parse("2026-04-23T11:00:44Z")),
+              ContainerRecord.Event("Failed", "Recover", Instant.parse("2026-04-23T11:00:45Z")),
+              ContainerRecord.Event("Failed", "Recover", Instant.parse("2026-04-23T11:00:45Z")),
+              ContainerRecord.Event("Failed", "Recover", Instant.parse("2026-04-23T11:00:46Z")),
+              ContainerRecord.Event("Failed", "Recover", Instant.parse("2026-04-23T11:00:46Z")),
+              ContainerRecord.Event("Failed", "Recover", Instant.parse("2026-04-23T11:00:51Z")),
+              ContainerRecord.Event("Failed", "Recover", Instant.parse("2026-04-23T11:00:51Z")),
+              ContainerRecord.Event("Succeeded", "Recover", Instant.parse("2026-04-23T11:01:04Z")),
+            ),
           ),
         ),
-        desiredPhase = Some("Run"),
+        desiredPhase = Some("Stop"),
       ),
       instances = Map(
-        "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-hmrlx"         -> InstanceData.IntValue(1),
-        "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-jhsjw"         -> InstanceData.IntValue(1),
-        "dyn-20220913103216-c04/testkit-487e4b5b-98ed-496d-9bec-342e42e64794-78b87dcd9c-2pvk9" -> InstanceData.IntValue(2),
+        "20260422135804-e86/chaos-verify-nginx-85455dbb49-b9fn7" -> InstanceData.IntValue(2),
+        "20260422135804-e86/chaos-verify-nginx-85455dbb49-rd8nv" -> InstanceData.IntValue(2),
+        "20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j" -> InstanceData.IntValue(2),
       ),
     )
     for {
@@ -629,6 +677,67 @@ object EncoderDecoderSuite extends SimpleIOSuite {
       }
       decoded <- IO.fromEither(json.as[Status])
     } yield expect(testStatus == decoded)
+  }
+
+  test("container record decodes legacy payload without new fields") {
+    val legacyJsonStr =
+      """{"id":"ns/pod-abc","phase":"Injected","selectorKey":".Target"}"""
+    for {
+      json    <- Sync[IO].fromEither(io.circe.parser.parse(legacyJsonStr))
+      decoded <- IO.fromEither(json.as[ContainerRecord])
+    } yield expect(
+      decoded == ContainerRecord(
+        id = "ns/pod-abc",
+        phase = "Injected",
+        selectorKey = ".Target",
+        injectedCount = 0,
+        recoveredCount = 0,
+        events = Nil,
+      ),
+    )
+  }
+
+  test("container record round-trip encode/decode") {
+    val record = ContainerRecord(
+      id = "ns/pod-xyz",
+      phase = "Injected",
+      selectorKey = ".",
+      injectedCount = 3,
+      recoveredCount = 2,
+      events = List(
+        ContainerRecord.Event("Succeeded", "Apply", Instant.parse("2026-04-23T10:59:44Z")),
+        ContainerRecord.Event("Failed", "Recover", Instant.parse("2026-04-23T11:00:44Z")),
+      ),
+    )
+    val encoded = record.asJson
+    for {
+      decoded <- IO.fromEither(encoded.as[ContainerRecord])
+    } yield expect(decoded == record)
+  }
+
+  test("container record event decodes Apply and Recover operations as plain strings") {
+    val applyJson =
+      """{"operation":"Apply","timestamp":"2026-04-23T10:59:44Z","type":"Succeeded"}"""
+    val recoverJson =
+      """{"operation":"Recover","timestamp":"2026-04-23T11:00:43Z","type":"Succeeded"}"""
+    for {
+      applyParsed     <- Sync[IO].fromEither(io.circe.parser.parse(applyJson))
+      applyDecoded    <- IO.fromEither(applyParsed.as[ContainerRecord.Event])
+      recoverParsed   <- Sync[IO].fromEither(io.circe.parser.parse(recoverJson))
+      recoverDecoded  <- IO.fromEither(recoverParsed.as[ContainerRecord.Event])
+    } yield expect(
+      applyDecoded == ContainerRecord.Event(
+        `type` = "Succeeded",
+        operation = "Apply",
+        timestamp = Instant.parse("2026-04-23T10:59:44Z"),
+      ),
+    ) && expect(
+      recoverDecoded == ContainerRecord.Event(
+        `type` = "Succeeded",
+        operation = "Recover",
+        timestamp = Instant.parse("2026-04-23T11:00:43Z"),
+      ),
+    )
   }
 
 }

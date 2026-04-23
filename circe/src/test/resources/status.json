@@ -1,49 +1,171 @@
 {
-    "conditions": [
-        {
-            "reason": "",
-            "status": "True",
-            "type": "Selected"
-        },
-        {
-            "reason": "",
-            "status": "False",
-            "type": "AllInjected"
-        },
-        {
-            "reason": "",
-            "status": "False",
-            "type": "AllRecovered"
-        },
-        {
-            "reason": "",
-            "status": "False",
-            "type": "Paused"
-        }
-    ],
-    "experiment": {
-        "containerRecords": [
-            {
-                "id": "dyn-20220913103216-c04/testkit-487e4b5b-98ed-496d-9bec-342e42e64794-78b87dcd9c-2pvk9",
-                "phase": "Not Injected/Wait",
-                "selectorKey": "."
-            },
-            {
-                "id": "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-jhsjw",
-                "phase": "Not Injected/Wait",
-                "selectorKey": ".Target"
-            },
-            {
-                "id": "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-hmrlx",
-                "phase": "Not Injected/Wait",
-                "selectorKey": ".Target"
-            }
-        ],
-        "desiredPhase": "Run"
+  "conditions": [
+    {
+      "status": "True",
+      "type": "Selected"
     },
-    "instances": {
-        "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-hmrlx": 1,
-        "dyn-20220913103216-c04/longliving-k8s-akka-watchdog-test-app-79bd9fd85-jhsjw": 1,
-        "dyn-20220913103216-c04/testkit-487e4b5b-98ed-496d-9bec-342e42e64794-78b87dcd9c-2pvk9": 2
+    {
+      "status": "False",
+      "type": "AllInjected"
+    },
+    {
+      "status": "True",
+      "type": "AllRecovered"
+    },
+    {
+      "status": "False",
+      "type": "Paused"
     }
+  ],
+  "experiment": {
+    "containerRecords": [
+      {
+        "events": [
+          {
+            "operation": "Apply",
+            "timestamp": "2026-04-23T10:59:44Z",
+            "type": "Succeeded"
+          },
+          {
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:00:43Z",
+            "type": "Succeeded"
+          }
+        ],
+        "id": "20260422135804-e86/chaos-verify-nginx-85455dbb49-b9fn7",
+        "injectedCount": 1,
+        "phase": "Not Injected",
+        "recoveredCount": 1,
+        "selectorKey": "."
+      },
+      {
+        "events": [
+          {
+            "operation": "Apply",
+            "timestamp": "2026-04-23T10:59:45Z",
+            "type": "Succeeded"
+          },
+          {
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:00:43Z",
+            "type": "Succeeded"
+          }
+        ],
+        "id": "20260422135804-e86/chaos-verify-nginx-85455dbb49-rd8nv",
+        "injectedCount": 1,
+        "phase": "Not Injected",
+        "recoveredCount": 1,
+        "selectorKey": ".Target"
+      },
+      {
+        "events": [
+          {
+            "operation": "Apply",
+            "timestamp": "2026-04-23T10:59:46Z",
+            "type": "Succeeded"
+          },
+          {
+            "message": "failed to apply for pod 20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j: unable to flush ip sets for pod chaos-verify-nginx-85455dbb49-wfm6j",
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:00:43Z",
+            "type": "Failed"
+          },
+          {
+            "message": "failed to apply for pod 20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j: unable to flush ip sets for pod chaos-verify-nginx-85455dbb49-wfm6j",
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:00:43Z",
+            "type": "Failed"
+          },
+          {
+            "message": "failed to apply for pod 20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j: unable to flush ip sets for pod chaos-verify-nginx-85455dbb49-wfm6j",
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:00:43Z",
+            "type": "Failed"
+          },
+          {
+            "message": "failed to apply for pod 20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j: unable to flush ip sets for pod chaos-verify-nginx-85455dbb49-wfm6j",
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:00:44Z",
+            "type": "Failed"
+          },
+          {
+            "message": "failed to apply for pod 20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j: unable to flush ip sets for pod chaos-verify-nginx-85455dbb49-wfm6j",
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:00:44Z",
+            "type": "Failed"
+          },
+          {
+            "message": "failed to apply for pod 20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j: unable to flush ip sets for pod chaos-verify-nginx-85455dbb49-wfm6j",
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:00:44Z",
+            "type": "Failed"
+          },
+          {
+            "message": "failed to apply for pod 20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j: unable to flush ip sets for pod chaos-verify-nginx-85455dbb49-wfm6j",
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:00:44Z",
+            "type": "Failed"
+          },
+          {
+            "message": "failed to apply for pod 20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j: unable to flush ip sets for pod chaos-verify-nginx-85455dbb49-wfm6j",
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:00:44Z",
+            "type": "Failed"
+          },
+          {
+            "message": "failed to apply for pod 20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j: unable to flush ip sets for pod chaos-verify-nginx-85455dbb49-wfm6j",
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:00:45Z",
+            "type": "Failed"
+          },
+          {
+            "message": "failed to apply for pod 20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j: unable to flush ip sets for pod chaos-verify-nginx-85455dbb49-wfm6j",
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:00:45Z",
+            "type": "Failed"
+          },
+          {
+            "message": "failed to apply for pod 20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j: unable to flush ip sets for pod chaos-verify-nginx-85455dbb49-wfm6j",
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:00:46Z",
+            "type": "Failed"
+          },
+          {
+            "message": "failed to apply for pod 20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j: unable to flush ip sets for pod chaos-verify-nginx-85455dbb49-wfm6j",
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:00:46Z",
+            "type": "Failed"
+          },
+          {
+            "message": "failed to apply for pod 20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j: unable to flush ip sets for pod chaos-verify-nginx-85455dbb49-wfm6j",
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:00:51Z",
+            "type": "Failed"
+          },
+          {
+            "message": "failed to apply for pod 20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j: unable to flush ip sets for pod chaos-verify-nginx-85455dbb49-wfm6j",
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:00:51Z",
+            "type": "Failed"
+          },
+          {
+            "operation": "Recover",
+            "timestamp": "2026-04-23T11:01:04Z",
+            "type": "Succeeded"
+          }
+        ],
+        "id": "20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j",
+        "injectedCount": 1,
+        "phase": "Not Injected",
+        "recoveredCount": 1,
+        "selectorKey": ".Target"
+      }
+    ],
+    "desiredPhase": "Stop"
+  },
+  "instances": {
+    "20260422135804-e86/chaos-verify-nginx-85455dbb49-b9fn7": 2,
+    "20260422135804-e86/chaos-verify-nginx-85455dbb49-rd8nv": 2,
+    "20260422135804-e86/chaos-verify-nginx-85455dbb49-wfm6j": 2
+  }
 }
