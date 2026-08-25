@@ -10,11 +10,11 @@ trait PodPhaseInstances {
 
   implicit val podPhaseEnc: Encoder[PodPhase] =
     Encoder.encodeString.contramap {
-      case Pending  => "Pending"
-      case Running  => "Running"
+      case Pending => "Pending"
+      case Running => "Running"
       case Succeeds => "Succeeds"
-      case Failed   => "Failed"
-      case Unknown  => "Unknown"
+      case Failed => "Failed"
+      case Unknown => "Unknown"
     }
 
   implicit val podPhaseDec: Decoder[PodPhase] =

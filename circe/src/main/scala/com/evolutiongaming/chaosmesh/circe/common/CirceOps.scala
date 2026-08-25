@@ -1,7 +1,8 @@
 package com.evolutiongaming.chaosmesh.circe.common
 
-import io.circe._
 import cats.syntax.all._
+import io.circe._
+
 import scala.reflect.ClassTag
 
 private[circe] object CirceOps {
@@ -35,7 +36,10 @@ private[circe] object CirceOps {
   }
 
   implicit class DecOps[A](val decoder: Decoder[A]) extends AnyVal {
-    def narrow[B <: A](implicit c: ClassTag[B]): Decoder[B] =
+    def narrow[B <: A](
+      implicit
+      c: ClassTag[B],
+    ): Decoder[B] =
       decoder.emap {
         case b: B => b.asRight
         case _ => s"Not a $c type".asLeft

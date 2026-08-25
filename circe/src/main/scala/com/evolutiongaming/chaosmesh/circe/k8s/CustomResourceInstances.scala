@@ -7,6 +7,6 @@ trait CustomResourceInstances extends ExperimentKindInstances with ResourceMetad
 
   implicit def customResourceEnc[Spec: Encoder]: Encoder[CustomResource[Spec, ExperimentKind]] =
     Encoder.forProduct4("apiVersion", "kind", "spec", "metadata") { res =>
-      (s"${Api.Group}/${Api.Version}", res.kind, res.spec, res.metadata)
+      (s"${ Api.Group }/${ Api.Version }", res.kind, res.spec, res.metadata)
     }
 }

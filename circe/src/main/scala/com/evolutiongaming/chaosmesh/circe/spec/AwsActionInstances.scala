@@ -31,8 +31,8 @@ trait AwsActionInstances extends DurationInstances {
       for {
         actionType <- c.get[String](ActionsEncoding.ActionFieldKey)
         result <- actionType match {
-          case "ec2-restart"   => AwsChaos.EC2Restart.asRight
-          case "ec2-stop"      => AwsChaos.EC2Stop.asRight
+          case "ec2-restart" => AwsChaos.EC2Restart.asRight
+          case "ec2-stop" => AwsChaos.EC2Stop.asRight
           case "detain-volume" => c.as[AwsChaos.DetainVolume]
           case other => DecodingFailure(s"Unknown AWS chaos action $other", c.history).asLeft
         }

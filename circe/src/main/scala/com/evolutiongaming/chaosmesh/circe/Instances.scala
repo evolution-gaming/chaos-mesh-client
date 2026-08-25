@@ -10,21 +10,21 @@ import com.evolutiongaming.chaosmesh.circe.k8s.CustomResourceInstances
 import com.evolutiongaming.chaosmesh.circe.kernelchaos._
 import com.evolutiongaming.chaosmesh.circe.networkchaos._
 import com.evolutiongaming.chaosmesh.circe.podchaos._
+import com.evolutiongaming.chaosmesh.circe.status._
 import com.evolutiongaming.chaosmesh.circe.stresschaos._
 import com.evolutiongaming.chaosmesh.circe.timechaos._
-import com.evolutiongaming.chaosmesh.circe.status._
 
 object instances
-    extends CustomResourceInstances
-    with PodChaosInstances
-    with NetworkChaosInstances
-    with StressChaosInstances
-    with IoChaosInstances
-    with DnsChaosInstances
-    with TimeChaosInstances
-    with JvmChaosInstances
-    with KernelChaosInstances
-    with AwsChaosInstances
-    with GcpChaosInstances
-    with HttpChaosInstances
-    with StatusInstances
+extends CustomResourceInstances
+with PodChaosInstances
+with NetworkChaosInstances
+with StressChaosInstances
+with IoChaosInstances
+with DnsChaosInstances
+with TimeChaosInstances
+with JvmChaosInstances
+with KernelChaosInstances
+with AwsChaosInstances
+with GcpChaosInstances
+with HttpChaosInstances
+with StatusInstances

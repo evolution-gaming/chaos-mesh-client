@@ -1,14 +1,12 @@
 package com.evolutiongaming.chaosmesh.kubernetes
 
+import ChaosMeshApi._
 import com.evolutiongaming.chaosmesh.circe.instances._
 import com.evolutiongaming.chaosmesh.model._
 import com.evolutiongaming.chaosmesh.model.k8s.Api
+import com.evolutiongaming.chaosmesh.model.status.Status
 import com.goyeau.kubernetes.client.KubernetesClient
 import com.goyeau.kubernetes.client.crd.CrdContext
-import io.circe.Json
-
-import ChaosMeshApi._
-import com.evolutiongaming.chaosmesh.model.status.Status
 
 class ChaosMeshApi[F[_]](client: KubernetesClient[F]) {
 
@@ -56,16 +54,16 @@ object ChaosMeshApi {
   private def ctx(name: String) =
     CrdContext(Api.Group, Api.Version, name)
 
-  private val podChaosContext     = ctx("podchaos")
+  private val podChaosContext = ctx("podchaos")
   private val networkChaosContext = ctx("networkchaos")
-  private val stressChaosContext  = ctx("stresschaos")
-  private val ioChaosContext      = ctx("iochaos")
-  private val dnsChaosContext     = ctx("dnschaos")
-  private val timeChaosContext    = ctx("timechaos")
-  private val jvmChaosContext     = ctx("jvmchaos")
-  private val kernelChaosContext  = ctx("kernelchaos")
-  private val awsChaosContext     = ctx("awschaos")
-  private val gcpChaosContext     = ctx("gpcchaos")
-  private val httpChaosContext    = ctx("httpchaos")
+  private val stressChaosContext = ctx("stresschaos")
+  private val ioChaosContext = ctx("iochaos")
+  private val dnsChaosContext = ctx("dnschaos")
+  private val timeChaosContext = ctx("timechaos")
+  private val jvmChaosContext = ctx("jvmchaos")
+  private val kernelChaosContext = ctx("kernelchaos")
+  private val awsChaosContext = ctx("awschaos")
+  private val gcpChaosContext = ctx("gpcchaos")
+  private val httpChaosContext = ctx("httpchaos")
 
 }

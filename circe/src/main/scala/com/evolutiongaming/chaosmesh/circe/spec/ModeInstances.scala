@@ -1,7 +1,8 @@
 package com.evolutiongaming.chaosmesh.circe.spec
 
-import io.circe._
 import com.evolutiongaming.chaosmesh.model.spec.Mode
+import io.circe._
+
 import scala.util.Try
 
 trait ModeInstances {
@@ -18,7 +19,7 @@ trait ModeInstances {
   implicit val modeDec: Decoder[Mode] =
     Decoder.instanceTry { c =>
       for {
-        modeField  <- c.get[String](ModeField).toTry
+        modeField <- c.get[String](ModeField).toTry
         valueField <- c.get[Option[String]](ModeValueField).toTry
         value = valueField.flatMap(v => Try(v.toInt).toOption)
         mode <- Mode.from[Try](modeField, value)

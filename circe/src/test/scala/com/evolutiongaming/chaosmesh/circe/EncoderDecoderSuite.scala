@@ -12,23 +12,23 @@ import com.evolutiongaming.chaosmesh.model.k8s._
 import com.evolutiongaming.chaosmesh.model.networkchaos.NetChaos
 import com.evolutiongaming.chaosmesh.model.podchaos.PodChaos
 import com.evolutiongaming.chaosmesh.model.spec._
+import com.evolutiongaming.chaosmesh.model.status.Condition
+import com.evolutiongaming.chaosmesh.model.status.ContainerRecord
+import com.evolutiongaming.chaosmesh.model.status.ExperimentStatus
+import com.evolutiongaming.chaosmesh.model.status.InstanceData
+import com.evolutiongaming.chaosmesh.model.status.Status
 import com.evolutiongaming.chaosmesh.model.stresschaos.StressChaos
 import com.evolutiongaming.chaosmesh.model.timechaos.TimeChaos
 import io.circe._
 import io.circe.syntax._
 import weaver._
 
-import scala.concurrent.duration._
 import java.time.Instant
-import com.evolutiongaming.chaosmesh.model.status.Status
-import com.evolutiongaming.chaosmesh.model.status.ExperimentStatus
-import com.evolutiongaming.chaosmesh.model.status.ContainerRecord
-import com.evolutiongaming.chaosmesh.model.status.Condition
-import com.evolutiongaming.chaosmesh.model.status.InstanceData
+import scala.concurrent.duration._
 
 /**
-  * Example test files are based on https://github.com/chaos-mesh/chaos-mesh/tree/master/examples
-  */
+ * Example test files are based on https://github.com/chaos-mesh/chaos-mesh/tree/master/examples
+ */
 object EncoderDecoderSuite extends SimpleIOSuite {
 
   val testPrinter = Printer.noSpacesSortKeys.copy(dropNullValues = true)
@@ -43,7 +43,7 @@ object EncoderDecoderSuite extends SimpleIOSuite {
   ): IO[Expectations] = {
     val test = for {
       fileJson <- getJsonContent(s"/$filename")
-      parsed   <- IO.fromEither(fileJson.as[Resource])
+      parsed <- IO.fromEither(fileJson.as[Resource])
     } yield expect(parsed == expected)
     test.handleError(err => failure(s"exception happened on decoding $err"))
   }
@@ -54,15 +54,18 @@ object EncoderDecoderSuite extends SimpleIOSuite {
   ): IO[Expectations] =
     for {
       fileJson <- getJsonContent(s"/$filename")
-      encoded        = toEncode.asJson
+      encoded = toEncode.asJson
       encodedJsonStr = encoded.printWith(testPrinter)
-      fileJsonStr    = fileJson.printWith(testPrinter)
+      fileJsonStr = fileJson.printWith(testPrinter)
     } yield expect.eql(encodedJsonStr, fileJsonStr)
 
   private def testEncodingDecoding[Spec, Resource <: CustomResource[Spec, ExperimentKind]](
-    filename:     String,
-    resource:     Resource,
-  )(implicit dec: Decoder[Resource], enc: Encoder[Spec]): IO[Expectations] =
+    filename: String,
+    resource: Resource,
+  )(implicit
+    dec: Decoder[Resource],
+    enc: Encoder[Spec],
+  ): IO[Expectations] =
     for {
       decoding <- testDecoding[Spec, Resource](
         filename = filename,
@@ -454,7 +457,7 @@ object EncoderDecoderSuite extends SimpleIOSuite {
   test("time chaos decode complex time offset") {
     for {
       fileJson <- getJsonContent("/time-chaos-complex-time.yaml")
-      parsed   <- IO.fromEither(fileJson.as[TimeChaos])
+      parsed <- IO.fromEither(fileJson.as[TimeChaos])
       time = parsed.spec.timeOffset
     } yield expect(time == -600000000100L.nanos)
   }
@@ -683,7 +686,7 @@ object EncoderDecoderSuite extends SimpleIOSuite {
     val legacyJsonStr =
       """{"id":"ns/pod-abc","phase":"Injected","selectorKey":".Target"}"""
     for {
-      json    <- Sync[IO].fromEither(io.circe.parser.parse(legacyJsonStr))
+      json <- Sync[IO].fromEither(io.circe.parser.parse(legacyJsonStr))
       decoded <- IO.fromEither(json.as[ContainerRecord])
     } yield expect(
       decoded == ContainerRecord(
@@ -721,10 +724,10 @@ object EncoderDecoderSuite extends SimpleIOSuite {
     val recoverJson =
       """{"operation":"Recover","timestamp":"2026-04-23T11:00:43Z","type":"Succeeded"}"""
     for {
-      applyParsed     <- Sync[IO].fromEither(io.circe.parser.parse(applyJson))
-      applyDecoded    <- IO.fromEither(applyParsed.as[ContainerRecord.Event])
-      recoverParsed   <- Sync[IO].fromEither(io.circe.parser.parse(recoverJson))
-      recoverDecoded  <- IO.fromEither(recoverParsed.as[ContainerRecord.Event])
+      applyParsed <- Sync[IO].fromEither(io.circe.parser.parse(applyJson))
+      applyDecoded <- IO.fromEither(applyParsed.as[ContainerRecord.Event])
+      recoverParsed <- Sync[IO].fromEither(io.circe.parser.parse(recoverJson))
+      recoverDecoded <- IO.fromEither(recoverParsed.as[ContainerRecord.Event])
     } yield expect(
       applyDecoded == ContainerRecord.Event(
         `type` = "Succeeded",

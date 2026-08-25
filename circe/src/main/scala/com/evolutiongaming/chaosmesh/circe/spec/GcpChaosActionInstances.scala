@@ -31,10 +31,10 @@ trait GcpChaosActionInstances extends DurationInstances {
       for {
         actionType <- c.get[String](ActionsEncoding.ActionFieldKey)
         result <- actionType match {
-          case "node-stop"  => GcpChaos.NodeStop.asRight
+          case "node-stop" => GcpChaos.NodeStop.asRight
           case "node-reset" => GcpChaos.NodeReset.asRight
-          case "disk-loss"  => c.as[GcpChaos.DiskLoss]
-          case other        => DecodingFailure(s"Unknown GCP chaos action $other", c.history).asLeft
+          case "disk-loss" => c.as[GcpChaos.DiskLoss]
+          case other => DecodingFailure(s"Unknown GCP chaos action $other", c.history).asLeft
         }
       } yield result
     }

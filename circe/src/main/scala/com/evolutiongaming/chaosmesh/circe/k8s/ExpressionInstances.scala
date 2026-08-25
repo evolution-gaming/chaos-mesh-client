@@ -23,8 +23,8 @@ trait ExpressionInstances {
     Decoder.instanceTry { c =>
       for {
         operatorName <- c.get[String](OperatorField).toTry
-        values       <- c.get[Expression.Operator.Values](ValuesField).toTry
-        operator     <- Expression.Operator.from[Try](operatorName, values)
+        values <- c.get[Expression.Operator.Values](ValuesField).toTry
+        operator <- Expression.Operator.from[Try](operatorName, values)
       } yield operator
     }
 

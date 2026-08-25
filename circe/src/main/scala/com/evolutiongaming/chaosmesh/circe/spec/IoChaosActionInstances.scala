@@ -32,11 +32,11 @@ trait IoChaosActionInstances extends DurationInstances {
 
   implicit val diskAttrOverrideDec: Decoder[IoChaos.AttrOverride] = deriveDecoder
 
-    implicit val diskMistakeFillingsEnc: Encoder[IoChaos.MistakeFillings] =
-      Encoder.encodeString.contramap {
-        case IoChaos.MistakeFillings.Zeros => "zero"
-        case IoChaos.MistakeFillings.Random => "random"
-      }
+  implicit val diskMistakeFillingsEnc: Encoder[IoChaos.MistakeFillings] =
+    Encoder.encodeString.contramap {
+      case IoChaos.MistakeFillings.Zeros => "zero"
+      case IoChaos.MistakeFillings.Random => "random"
+    }
 
   implicit val diskMistakeFillingsDec: Decoder[IoChaos.MistakeFillings] =
     Decoder.decodeString.emap {
@@ -70,10 +70,10 @@ trait IoChaosActionInstances extends DurationInstances {
       for {
         actionType <- c.get[String](ActionsEncoding.ActionFieldKey)
         result <- actionType match {
-          case "latency"      => c.as[IoChaos.Latency]
-          case "fault"        => c.as[IoChaos.Fault]
+          case "latency" => c.as[IoChaos.Latency]
+          case "fault" => c.as[IoChaos.Fault]
           case "attrOverride" => c.as[IoChaos.AttrOverride]
-          case "mistake"      => c.as[IoChaos.Mistake]
+          case "mistake" => c.as[IoChaos.Mistake]
           case other => DecodingFailure(s"Unknown IO chaos action $other", c.history).asLeft
         }
       } yield result

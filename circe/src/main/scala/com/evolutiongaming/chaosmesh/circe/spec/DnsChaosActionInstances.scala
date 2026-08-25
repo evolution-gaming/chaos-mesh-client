@@ -24,8 +24,8 @@ trait DnsChaosActionInstances extends DurationInstances {
         actionType <- c.get[String](ActionsEncoding.ActionFieldKey)
         result <- actionType match {
           case "random" => DnsChaos.Random.asRight
-          case "error"  => DnsChaos.Error.asRight
-          case other    => DecodingFailure(s"Unknown DNS chaos action $other", c.history).asLeft
+          case "error" => DnsChaos.Error.asRight
+          case other => DecodingFailure(s"Unknown DNS chaos action $other", c.history).asLeft
         }
       } yield result
     }
