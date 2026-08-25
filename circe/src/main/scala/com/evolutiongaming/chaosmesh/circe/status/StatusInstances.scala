@@ -2,35 +2,35 @@ package com.evolutiongaming.chaosmesh.circe.status
 
 import com.evolutiongaming.chaosmesh.model.status.Condition._
 import com.evolutiongaming.chaosmesh.model.status._
-import io.circe.generic.semiauto._
 import io.circe._
+import io.circe.generic.semiauto._
 
 import scala.util.Try
 
 trait StatusInstances {
 
-  val ConditionTypeKey    = "type"
-  val ReasonKey           = "reason"
-  val StatusKey           = "status"
-  val ConditionsListKey   = "conditions"
-  val InstancesKey        = "instances"
-  val ExperimentKey       = "experiment"
+  val ConditionTypeKey = "type"
+  val ReasonKey = "reason"
+  val StatusKey = "status"
+  val ConditionsListKey = "conditions"
+  val InstancesKey = "instances"
+  val ExperimentKey = "experiment"
   val ContainerRecordsKey = "containerRecords"
-  val DesiredPhaseKey     = "desiredPhase"
-  val IdKey               = "id"
-  val PhaseKey            = "phase"
-  val SelectorKeyKey      = "selectorKey"
-  val InjectedCountKey    = "injectedCount"
-  val RecoveredCountKey   = "recoveredCount"
-  val EventsKey           = "events"
-  val EventTypeKey        = "type"
-  val OperationKey        = "operation"
-  val TimestampKey        = "timestamp"
+  val DesiredPhaseKey = "desiredPhase"
+  val IdKey = "id"
+  val PhaseKey = "phase"
+  val SelectorKeyKey = "selectorKey"
+  val InjectedCountKey = "injectedCount"
+  val RecoveredCountKey = "recoveredCount"
+  val EventsKey = "events"
+  val EventTypeKey = "type"
+  val OperationKey = "operation"
+  val TimestampKey = "timestamp"
 
   implicit val conditionDec: Decoder[Condition] =
     Decoder.instance { c =>
       for {
-        cType        <- c.get[String](ConditionTypeKey)
+        cType <- c.get[String](ConditionTypeKey)
         rawReasonStr <- c.get[Option[String]](ReasonKey)
         reason = rawReasonStr.map(_.trim()).filter(_.nonEmpty)
         status <- c
@@ -52,18 +52,18 @@ trait StatusInstances {
     def objFrom(cType: String, status: Boolean, reason: Option[String]): JsonObject =
       JsonObject(
         ConditionTypeKey -> Json.fromString(cType),
-        ReasonKey        -> Json.fromString(reason.getOrElse("")),
-        StatusKey        -> Json.fromBoolean(status),
+        ReasonKey -> Json.fromString(reason.getOrElse("")),
+        StatusKey -> Json.fromBoolean(status),
       )
     Encoder.encodeJsonObject.contramap {
-      case Selected            => objFrom("Selected", true, None)
+      case Selected => objFrom("Selected", true, None)
       case NotSelected(reason) => objFrom("Selected", false, reason)
-      case AllInjected         => objFrom("AllInjected", true, None)
+      case AllInjected => objFrom("AllInjected", true, None)
       case NotInjected(reason) => objFrom("AllInjected", false, reason)
-      case Running             => objFrom("Paused", false, None)
-      case Paused(reason)      => objFrom("Paused", true, reason)
-      case OngoingExperiment   => objFrom("Recovered", false, None)
-      case Recovered(reason)   => objFrom("Recovered", true, reason)
+      case Running => objFrom("Paused", false, None)
+      case Paused(reason) => objFrom("Paused", true, reason)
+      case OngoingExperiment => objFrom("Recovered", false, None)
+      case Recovered(reason) => objFrom("Recovered", true, reason)
     }
   }
 
@@ -92,12 +92,12 @@ trait StatusInstances {
   implicit val containerRecordDec: Decoder[ContainerRecord] =
     Decoder.instance { c =>
       for {
-        id             <- c.get[String](IdKey)
-        phase          <- c.get[String](PhaseKey)
-        selectorKey    <- c.get[String](SelectorKeyKey)
-        injectedCount  <- c.getOrElse[Int](InjectedCountKey)(0)
+        id <- c.get[String](IdKey)
+        phase <- c.get[String](PhaseKey)
+        selectorKey <- c.get[String](SelectorKeyKey)
+        injectedCount <- c.getOrElse[Int](InjectedCountKey)(0)
         recoveredCount <- c.getOrElse[Int](RecoveredCountKey)(0)
-        events         <- c.getOrElse[List[ContainerRecord.Event]](EventsKey)(Nil)
+        events <- c.getOrElse[List[ContainerRecord.Event]](EventsKey)(Nil)
       } yield ContainerRecord(
         id = id,
         phase = phase,
@@ -111,19 +111,19 @@ trait StatusInstances {
   implicit val containerRecordEnc: Encoder[ContainerRecord] =
     Encoder.encodeJsonObject.contramap { record =>
       JsonObject(
-        IdKey             -> Json.fromString(record.id),
-        PhaseKey          -> Json.fromString(record.phase),
-        SelectorKeyKey    -> Json.fromString(record.selectorKey),
-        InjectedCountKey  -> Json.fromInt(record.injectedCount),
+        IdKey -> Json.fromString(record.id),
+        PhaseKey -> Json.fromString(record.phase),
+        SelectorKeyKey -> Json.fromString(record.selectorKey),
+        InjectedCountKey -> Json.fromInt(record.injectedCount),
         RecoveredCountKey -> Json.fromInt(record.recoveredCount),
-        EventsKey         -> Encoder[List[ContainerRecord.Event]].apply(record.events),
+        EventsKey -> Encoder[List[ContainerRecord.Event]].apply(record.events),
       )
     }
 
   implicit val experimentStatusDec: Decoder[ExperimentStatus] = Decoder.instance { c =>
     for {
       containerRecords <- c.get[Option[List[ContainerRecord]]](ContainerRecordsKey)
-      desiredPhase     <- c.get[Option[String]](DesiredPhaseKey)
+      desiredPhase <- c.get[Option[String]](DesiredPhaseKey)
     } yield ExperimentStatus(
       containerRecords = containerRecords.getOrElse(List.empty),
       desiredPhase = desiredPhase,
@@ -147,8 +147,8 @@ trait StatusInstances {
   implicit val statusDec: Decoder[Status] = Decoder.instance { c =>
     for {
       conditionsList <- c.get[Option[List[Condition]]](ConditionsListKey)
-      instances      <- c.get[Option[Map[String, InstanceData]]](InstancesKey)
-      experiment     <- c.get[ExperimentStatus](ExperimentKey)
+      instances <- c.get[Option[Map[String, InstanceData]]](InstancesKey)
+      experiment <- c.get[ExperimentStatus](ExperimentKey)
     } yield Status(
       conditions = conditionsList.getOrElse(List.empty),
       instances = instances.getOrElse(Map.empty),

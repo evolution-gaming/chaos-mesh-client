@@ -28,7 +28,8 @@ trait NetworkChaosActionInstances extends DurationInstances {
 
   implicit val netPacketLossDec: Decoder[NetChaos.PacketLoss] = deriveDecoder
 
-  implicit val netPacketCorruptRulesEnc: Encoder.AsObject[NetChaos.PacketCorruptRules] = deriveEncoder
+  implicit val netPacketCorruptRulesEnc: Encoder.AsObject[NetChaos.PacketCorruptRules] =
+    deriveEncoder
 
   implicit val netPacketCorruptRulesDec: Decoder[NetChaos.PacketCorruptRules] = deriveDecoder
 
@@ -79,9 +80,9 @@ trait NetworkChaosActionInstances extends DurationInstances {
         result <- actionType match {
           case "partition" => NetChaos.NetPartition.asRight
           case "bandwidth" => c.as[NetChaos.BandwidthLimit]
-          case "loss"      => c.as[NetChaos.PacketLoss]
-          case "corrupt"   => c.as[NetChaos.PacketCorrupt]
-          case "delay"     => c.as[NetChaos.Delay]
+          case "loss" => c.as[NetChaos.PacketLoss]
+          case "corrupt" => c.as[NetChaos.PacketCorrupt]
+          case "delay" => c.as[NetChaos.Delay]
           case "duplicate" => c.as[NetChaos.PacketDuplicate]
           case other => DecodingFailure(s"Unknown network chaos action $other", c.history).asLeft
         }

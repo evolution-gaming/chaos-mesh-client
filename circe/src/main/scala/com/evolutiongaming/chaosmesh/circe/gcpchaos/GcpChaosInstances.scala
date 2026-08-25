@@ -2,21 +2,21 @@ package com.evolutiongaming.chaosmesh.circe.gcpchaos
 
 import com.evolutiongaming.chaosmesh.circe.common.CirceOps._
 import com.evolutiongaming.chaosmesh.circe.common._
+import com.evolutiongaming.chaosmesh.circe.k8s._
 import com.evolutiongaming.chaosmesh.circe.spec._
 import com.evolutiongaming.chaosmesh.model.gcpchaos.GcpChaos
+import com.evolutiongaming.chaosmesh.model.k8s.ExperimentKind
 import io.circe._
 import io.circe.generic.semiauto._
 import io.circe.syntax._
-import com.evolutiongaming.chaosmesh.circe.k8s._
-import com.evolutiongaming.chaosmesh.model.k8s.ExperimentKind
 
 trait GcpChaosInstances
-    extends ModeInstances
-    with SelectorsInstances
-    with OptionalInfDurationInstances
-    with GcpChaosActionInstances
-    with ExperimentKindInstances
-    with ResourceMetadataInstances {
+extends ModeInstances
+with SelectorsInstances
+with OptionalInfDurationInstances
+with GcpChaosActionInstances
+with ExperimentKindInstances
+with ResourceMetadataInstances {
 
   implicit val gcpChaosSpecEnc: Encoder.AsObject[GcpChaos.Spec] =
     deriveEncoder[GcpChaos.Spec]
@@ -26,7 +26,7 @@ trait GcpChaosInstances
   implicit val gcpChaosSpecDec: Decoder[GcpChaos.Spec] =
     for {
       action <- gcpChaosActionDec
-      mode   <- modeDec
+      mode <- modeDec
       decoder <- deriveDecoder[GcpChaos.Spec]
         .prepare(_.replaceFieldValue(ActionsEncoding.ActionFieldKey, action.asJson))
         .prepare(_.replaceFieldValue(ModeField, mode.asJson))

@@ -35,9 +35,9 @@ trait PodChaosActionInstances extends DurationInstances {
       for {
         actionType <- c.get[String](ActionsEncoding.ActionFieldKey)
         result <- actionType match {
-          case "pod-kill"       => c.as[PodChaos.PodKill]
+          case "pod-kill" => c.as[PodChaos.PodKill]
           case "container-kill" => c.as[PodChaos.ContainerKill]
-          case "pod-failure"    => PodChaos.PodFailure.asRight
+          case "pod-failure" => PodChaos.PodFailure.asRight
           case other => DecodingFailure(s"Unknown pod chaos action $other", c.history).asLeft
         }
       } yield result

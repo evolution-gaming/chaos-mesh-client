@@ -11,12 +11,12 @@ import io.circe.generic.semiauto._
 import io.circe.syntax._
 
 trait AwsChaosInstances
-    extends ModeInstances
-    with SelectorsInstances
-    with OptionalInfDurationInstances
-    with AwsActionInstances
-    with ExperimentKindInstances
-    with ResourceMetadataInstances {
+extends ModeInstances
+with SelectorsInstances
+with OptionalInfDurationInstances
+with AwsActionInstances
+with ExperimentKindInstances
+with ResourceMetadataInstances {
 
   implicit val awsChaosSpecEnc: Encoder.AsObject[AwsChaos.Spec] =
     deriveEncoder[AwsChaos.Spec]
@@ -26,7 +26,7 @@ trait AwsChaosInstances
   implicit val awsChaosSpecDec: Decoder[AwsChaos.Spec] =
     for {
       action <- awsChaosActionDec
-      mode   <- modeDec
+      mode <- modeDec
       decoder <- deriveDecoder[AwsChaos.Spec]
         .prepare(_.replaceFieldValue(ActionsEncoding.ActionFieldKey, action.asJson))
         .prepare(_.replaceFieldValue(ModeField, mode.asJson))

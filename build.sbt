@@ -2,16 +2,18 @@ import Dependencies._
 
 inThisBuild(
   Seq(
-    homepage             := Some(url("https://github.com/evolution-gaming/chaos-mesh-client")),
-    organization         := "com.evolutiongaming",
-    organizationName     := "Evolution",
+    homepage := Some(url("https://github.com/evolution-gaming/chaos-mesh-client")),
+    organization := "com.evolutiongaming",
+    organizationName := "Evolution",
     organizationHomepage := Some(url("https://evolution.com")),
-    startYear            := Some(2022),
-    licenses             := Seq(("MIT", url("https://opensource.org/licenses/MIT"))),
-    crossScalaVersions   := Seq("2.13.16", "3.3.4"),
-    versionScheme        := Some("semver-spec"),
-    scalaVersion         := crossScalaVersions.value.head,
-    publishTo            := Some(Resolver.evolutionReleases),
+    startYear := Some(2022),
+    licenses := Seq(("MIT", url("https://opensource.org/licenses/MIT"))),
+    crossScalaVersions := Seq("2.13.18", "3.3.8"),
+    versionScheme := Some("semver-spec"),
+    scalaVersion := crossScalaVersions.value.head,
+    publishTo := Some(Resolver.evolutionReleases),
+    versionPolicyIntention := Compatibility.None,
+//    versionPolicyIntention := Compatibility.BinaryCompatible,
     scalacOptions ++= {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((3, _)) => Seq.empty
@@ -21,14 +23,13 @@ inThisBuild(
           )
       }
     },
-    resolvers ++= Seq(
-      Resolver.sonatypeRepo("snapshots"),
-    ),
+//    resolvers ++= Seq(
+//      Resolver.sonatypeRepo("snapshots"),
+//    ),
   ),
 )
 
 lazy val commonSettings = Seq(
-  releaseCrossBuild    := true,
   scalacOptsFailOnWarn := Some(false),
   testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
   libraryDependencies ++= Seq(
@@ -37,17 +38,16 @@ lazy val commonSettings = Seq(
 )
 
 val alias: Seq[sbt.Def.Setting[?]] =
-  //  addCommandAlias("check", "all versionPolicyCheck Compile/doc") ++
-  addCommandAlias("check", "show version") ++
+  addCommandAlias("check", "all scalafmtCheckRepo versionPolicyCheck Compile/doc") ++
+    addCommandAlias("fmt", "scalafmtRepo") ++
     addCommandAlias("build", "+all compile test")
-
 
 lazy val root = project
   .in(file("."))
   .settings(
     commonSettings,
-    name            := "chaos-mesh-client",
-    publish / skip  := true,
+    name := "chaos-mesh-client",
+    publish / skip := true,
     publishArtifact := false,
   )
   .settings(alias)
@@ -75,7 +75,7 @@ lazy val circe = project
       Circe.Core,
       Circe.Generic,
       Circe.Parser % Test,
-      Circe.Yaml   % Test,
+      Circe.Yaml % Test,
     ),
   )
 

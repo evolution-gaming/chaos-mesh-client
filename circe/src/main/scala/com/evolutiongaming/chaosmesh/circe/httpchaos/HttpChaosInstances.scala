@@ -12,17 +12,17 @@ import io.circe.generic.semiauto._
 import io.circe.syntax._
 
 trait HttpChaosInstances
-    extends ModeInstances
-    with SelectorsInstances
-    with OptionalInfDurationInstances
-    with ExperimentKindInstances
-    with ResourceMetadataInstances {
+extends ModeInstances
+with SelectorsInstances
+with OptionalInfDurationInstances
+with ExperimentKindInstances
+with ResourceMetadataInstances {
 
-  protected val TargetField              = "target"
+  protected val TargetField = "target"
   protected val CamelCaseResponseHeaders = "responseHeaders"
-  protected val CamelCaseRequestHeaders  = "requestHeaders"
+  protected val CamelCaseRequestHeaders = "requestHeaders"
   protected val SnakeCaseResponseHeaders = "response_heads"
-  protected val SnakeCaseRequestHeaders  = "request_headers"
+  protected val SnakeCaseRequestHeaders = "request_headers"
 
   implicit val bodyEnc: Encoder[HttpChaos.Body] = deriveEncoder
 
@@ -83,9 +83,9 @@ trait HttpChaosInstances
       for {
         targetType <- c.get[String](TargetField)
         result <- targetType match {
-          case "Request"  => c.as[HttpChaos.Target.Request]
+          case "Request" => c.as[HttpChaos.Target.Request]
           case "Response" => c.as[HttpChaos.Target.Response]
-          case other      => DecodingFailure(s"Unknown target type $other", c.history).asLeft
+          case other => DecodingFailure(s"Unknown target type $other", c.history).asLeft
         }
       } yield result
     }
@@ -99,7 +99,7 @@ trait HttpChaosInstances
   implicit val httpChaosSpecDec: Decoder[HttpChaos.Spec] =
     for {
       target <- targetDec
-      mode   <- modeDec
+      mode <- modeDec
       decoder <- deriveDecoder[HttpChaos.Spec]
         .prepare(_.renameField(SnakeCaseRequestHeaders, CamelCaseRequestHeaders))
         .prepare(_.replaceFieldValue(TargetField, target.asJson))

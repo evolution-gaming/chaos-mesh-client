@@ -11,12 +11,12 @@ import io.circe.generic.semiauto._
 import io.circe.syntax._
 
 trait PodChaosInstances
-    extends PodChaosActionInstances
-    with ModeInstances
-    with SelectorsInstances
-    with OptionalInfDurationInstances
-    with ExperimentKindInstances
-    with ResourceMetadataInstances {
+extends PodChaosActionInstances
+with ModeInstances
+with SelectorsInstances
+with OptionalInfDurationInstances
+with ExperimentKindInstances
+with ResourceMetadataInstances {
 
   implicit val podChaosSpecEnc: Encoder.AsObject[PodChaos.Spec] =
     deriveEncoder[PodChaos.Spec]
@@ -26,7 +26,7 @@ trait PodChaosInstances
   implicit val podChaosSpecDec: Decoder[PodChaos.Spec] =
     for {
       action <- podChaosActionDec
-      mode   <- modeDec
+      mode <- modeDec
       decoder <- deriveDecoder[PodChaos.Spec]
         .prepare(_.replaceFieldValue(ActionsEncoding.ActionFieldKey, action.asJson))
         .prepare(_.replaceFieldValue(ModeField, mode.asJson))

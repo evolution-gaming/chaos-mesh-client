@@ -15,35 +15,34 @@ object Action {
   object PodChaos {
 
     /**
-      * Injects fault into a specified Pod to make the Pod unavailable for a period of time
-      */
+     * Injects fault into a specified Pod to make the Pod unavailable for a period of time
+     */
     case object PodFailure extends PodChaos
 
     /**
-      * Kills a specified Pod
-      *
-      * @param gracePeriod - Duration in seconds before deleting Pod
-      */
+     * Kills a specified Pod
+     *
+     * @param gracePeriod - Duration in seconds before deleting Pod
+     */
     case class PodKill(
       gracePeriod: Long,
     ) extends PodChaos
 
     /**
-      * Kills the specified containers in the target Pod
-      *
-      * @param containerNames - Target containers
-      */
+     * Kills the specified containers in the target Pod
+     *
+     * @param containerNames - Target containers
+     */
     case class ContainerKill private[chaosmesh] (
       containerNames: NonEmptyList[String],
     ) extends PodChaos
-        with Attributes.HasTargetContainers[Id]
+    with Attributes.HasTargetContainers[Id]
 
     object ContainerKill {
 
       /**
-        * Specifies target container names
-        *
-        */
+       * Specifies target container names
+       */
       def apply(first: String, rest: String*): ContainerKill =
         ContainerKill(NonEmptyList.of(first, rest: _*))
     }
@@ -55,31 +54,29 @@ object Action {
   object NetChaos {
 
     /**
-      * Network disconnection and partition
-      */
+     * Network disconnection and partition
+     */
     case object NetPartition extends NetChaos
 
     /**
-      * Simulating bandwidth limit fault
-      * https://chaos-mesh.org/docs/simulate-network-chaos-on-kubernetes/#bandwidth
-      *
-      * @param bandwidth - Indicates bandwidth limit rules 
-      */
+     * Simulating bandwidth limit fault
+     * https://chaos-mesh.org/docs/simulate-network-chaos-on-kubernetes/#bandwidth
+     *
+     * @param bandwidth - Indicates bandwidth limit rules
+     */
     final case class BandwidthLimit private[chaosmesh] (
       bandwidth: BandwidthLimitRules,
     ) extends NetChaos {
 
       /**
-        * Specifies the maximum consumption of bucket
-        *
-        */
+       * Specifies the maximum consumption of bucket
+       */
       def withPeakRate(peakRate: Long) =
         updateRules(_.copy(peakrate = peakRate.some))
 
       /**
-        * Specifies the size of peakrate bucket
-        *
-        */
+       * Specifies the size of peakrate bucket
+       */
       def withPeakRateBucketSize(size: Int) =
         updateRules(_.copy(minburst = size.some))
 
@@ -91,59 +88,57 @@ object Action {
     object BandwidthLimit {
 
       /**
-        * Simulating bandwidth limit fault
-        *
-        * @param rate - Specifies the rate of bandwidth limit in bytes per second
-        * @param limit - Specifies the number of bytes waiting in queue
-        * @param buffer - Specifies the maximum number of bytes that can be sent instantaneously
-        */
+       * Simulating bandwidth limit fault
+       *
+       * @param rate - Specifies the rate of bandwidth limit in bytes per second
+       * @param limit - Specifies the number of bytes waiting in queue
+       * @param buffer - Specifies the maximum number of bytes that can be sent instantaneously
+       */
       def apply(
-        rate:   Long,
-        limit:  Long,
+        rate: Long,
+        limit: Long,
         buffer: Int,
       ): BandwidthLimit =
-        BandwidthLimit(BandwidthLimitRules(s"${rate}bps", limit, buffer, None, None))
+        BandwidthLimit(BandwidthLimitRules(s"${ rate }bps", limit, buffer, None, None))
     }
 
     /**
-      * Indicates bandwidth limit rules
-      *
-      * @param rate - Indicates the rate of bandwidth limit in bytes per second
-      * @param limit - Indicates the number of bytes waiting in queue
-      * @param buffer - Indicates the maximum number of bytes that can be sent instantaneously
-      * @param peakrate - Indicates the maximum consumption of bucket
-      * @param minburst - Indicates the size of peakrate bucket
-      */
+     * Indicates bandwidth limit rules
+     *
+     * @param rate - Indicates the rate of bandwidth limit in bytes per second
+     * @param limit - Indicates the number of bytes waiting in queue
+     * @param buffer - Indicates the maximum number of bytes that can be sent instantaneously
+     * @param peakrate - Indicates the maximum consumption of bucket
+     * @param minburst - Indicates the size of peakrate bucket
+     */
     final case class BandwidthLimitRules private[spec] (
-      rate:     String,
-      limit:    Long,
-      buffer:   Int,
+      rate: String,
+      limit: Long,
+      buffer: Int,
       peakrate: Option[Long],
       minburst: Option[Int],
     )
 
     /**
-      * Simulating packet loss fault
-      * https://chaos-mesh.org/docs/simulate-network-chaos-on-kubernetes/#loss
-      * 
-      * @param loss - Indicates packet lost fault rules
-      */
+     * Simulating packet loss fault
+     * https://chaos-mesh.org/docs/simulate-network-chaos-on-kubernetes/#loss
+     *
+     * @param loss - Indicates packet lost fault rules
+     */
     final case class PacketLoss private[chaosmesh] (
       loss: PacketLossRules,
     ) extends NetChaos {
 
       /**
-        * Specifies the probability of packet loss. Should be 0..100
-        *
-        */
+       * Specifies the probability of packet loss. Should be 0..100
+       */
       def withProbability(probability: Int) =
         updateRules(_.copy(loss = probability.toString().some))
 
       /**
-        * Specifies the correlation between the probability of current packet loss
-        * and the previous time's packet loss. Should be 0..100
-        *
-        */
+       * Specifies the correlation between the probability of current packet loss and the previous
+       * time's packet loss. Should be 0..100
+       */
       def withCorrelation(correlation: Int) =
         updateRules(_.copy(correlation = correlation.toString().some))
 
@@ -157,38 +152,37 @@ object Action {
     }
 
     /**
-      * Indicates packet lost fault rules
-      *
-      * @param loss - Indicates the probability of packet loss 0..100
-      * @param correlation - Indicates the correlation between the probability
-      * of current packet loss and the previous time's packet loss 0..100
-      */
+     * Indicates packet lost fault rules
+     *
+     * @param loss - Indicates the probability of packet loss 0..100
+     * @param correlation - Indicates the correlation between the probability
+     * of current packet loss and the previous time's packet loss 0..100
+     */
     final case class PacketLossRules private[spec] (
-      loss:        Option[String],
+      loss: Option[String],
       correlation: Option[String],
     )
 
     /**
-      * Simulating package corruption fault
-      * https://chaos-mesh.org/docs/simulate-network-chaos-on-kubernetes/#corrupt
-      *
-      * @param corrupt - Indicates packet corrupt rules 
-      */
+     * Simulating package corruption fault
+     * https://chaos-mesh.org/docs/simulate-network-chaos-on-kubernetes/#corrupt
+     *
+     * @param corrupt - Indicates packet corrupt rules
+     */
     final case class PacketCorrupt private[chaosmesh] (
       corrupt: PacketCorruptRules,
     ) extends NetChaos {
 
       /**
-        * Specifies the probability of packet corrupt. Should be 0..100
-        *
-        */
+       * Specifies the probability of packet corrupt. Should be 0..100
+       */
       def withProbability(probability: Int) =
         updateRules(_.copy(corrupt = probability.toString().some))
 
       /**
-        * Specifies the correlation between the current corrupt and the previous one. Should be 0..100
-        *
-        */
+       * Specifies the correlation between the current corrupt and the previous one. Should be
+       * 0..100
+       */
       def withCorrelation(correlation: Int) =
         updateRules(_.copy(correlation = correlation.toString().some))
 
@@ -203,67 +197,62 @@ object Action {
     }
 
     /**
-      * Indicates packet corrupt rules
-      *
-      * @param corrupt - Indicates the probability of packet corruption 0..100
-      * @param correlation - Indicates the correlation between the probability
-      * of current packet corruption and the previous time's packet corruption 0..100
-      */
+     * Indicates packet corrupt rules
+     *
+     * @param corrupt - Indicates the probability of packet corruption 0..100
+     * @param correlation - Indicates the correlation between the probability
+     * of current packet corruption and the previous time's packet corruption 0..100
+     */
     final case class PacketCorruptRules private[spec] (
-      corrupt:     Option[String],
+      corrupt: Option[String],
       correlation: Option[String],
     )
 
     /**
-      * Simulating network delay fault
-      * https://chaos-mesh.org/docs/simulate-network-chaos-on-kubernetes/#delay
-      *
-      * @param delay - Indicates delay rules
-      */
+     * Simulating network delay fault
+     * https://chaos-mesh.org/docs/simulate-network-chaos-on-kubernetes/#delay
+     *
+     * @param delay - Indicates delay rules
+     */
     final case class Delay private[chaosmesh] (
       delay: DelayRules,
     ) extends NetChaos {
 
       /**
-        * Specifies the network latency
-        *
-        */
+       * Specifies the network latency
+       */
       def withLatency(duration: FiniteDuration) =
         Delay(delay.copy(latency = duration.some))
 
       /**
-        * Specifies the correlation between the current latency and the previous one. Should be 0..100
-        *
-        */
+       * Specifies the correlation between the current latency and the previous one. Should be
+       * 0..100
+       */
       def withCorrelation(correlation: Int) =
         Delay(delay.copy(correlation = correlation.toString.some))
 
       /**
-        * Specifies the range of the network latency
-        *
-        */
+       * Specifies the range of the network latency
+       */
       def withJitter(jitter: FiniteDuration) =
         Delay(delay.copy(jitter = jitter.some))
 
       /**
-        * Specifies the probability to reorder. Should be 0..100
-        *
-        */
+       * Specifies the probability to reorder. Should be 0..100
+       */
       def withReorderingProbability(probability: Int) =
         updateReordering(_.copy(reorder = probability.toString.some))
 
       /**
-        * Specifies the correlation between this time's length of delay time
-        * and the previous time's length of delay time. Should be 0..100
-        *
-        */
+       * Specifies the correlation between this time's length of delay time and the previous time's
+       * length of delay time. Should be 0..100
+       */
       def withReorderingCorrelation(corr: Int) =
         updateReordering(_.copy(correlation = corr.toString.some))
 
       /**
-        * Specifies the gap before and after packet reordering	
-        *
-        */
+       * Specifies the gap before and after packet reordering
+       */
       def withReorderingGap(gap: Int) =
         updateReordering(_.copy(gap = gap.some))
 
@@ -280,56 +269,54 @@ object Action {
     }
 
     /**
-      * Indicates network delay fault
-      *
-      * @param latency - Indicates the network latency
-      * @param correlation - Indicates the correlation between the current latency and the previous one 0..100
-      * @param jitter - Indicates the range of the network latency
-      * @param reorder - Indicates packet reordering fault rules
-      */
+     * Indicates network delay fault
+     *
+     * @param latency - Indicates the network latency
+     * @param correlation - Indicates the correlation between the current latency and the previous one 0..100
+     * @param jitter - Indicates the range of the network latency
+     * @param reorder - Indicates packet reordering fault rules
+     */
     final case class DelayRules private[spec] (
-      latency:     Option[FiniteDuration],
+      latency: Option[FiniteDuration],
       correlation: Option[String],
-      jitter:      Option[FiniteDuration],
-      reorder:     Option[PacketReorder],
+      jitter: Option[FiniteDuration],
+      reorder: Option[PacketReorder],
     )
 
     /**
-      * Indicates network packet reordering fault
-      *
-      * @param reorder - Indicates the probability to reorder 0..100
-      * @param correlation - Indicates the correlation between this time's length of delay time
-      * and the previous time's length of delay time 0..100
-      * @param gap - Indicates the gap before and after packet reordering
-      */
+     * Indicates network packet reordering fault
+     *
+     * @param reorder - Indicates the probability to reorder 0..100
+     * @param correlation - Indicates the correlation between this time's length of delay time
+     * and the previous time's length of delay time 0..100
+     * @param gap - Indicates the gap before and after packet reordering
+     */
     final case class PacketReorder private[spec] (
-      reorder:     Option[String],
+      reorder: Option[String],
       correlation: Option[String],
-      gap:         Option[Int],
+      gap: Option[Int],
     )
 
     /**
-      * Simulating package duplication
-      * https://chaos-mesh.org/docs/simulate-network-chaos-on-kubernetes/#duplicate
-      *
-      * @param duplicate - Indicates packet duplicate rules 
-      */
+     * Simulating package duplication
+     * https://chaos-mesh.org/docs/simulate-network-chaos-on-kubernetes/#duplicate
+     *
+     * @param duplicate - Indicates packet duplicate rules
+     */
     final case class PacketDuplicate private[chaosmesh] (
       duplicate: PacketDuplicateRules,
     ) extends NetChaos {
 
       /**
-        * Specifies the probability of packet duplicating. Should be 0..100
-        *
-        */
+       * Specifies the probability of packet duplicating. Should be 0..100
+       */
       def withProbability(probability: Int) =
         updateRules(_.copy(duplicate = probability.toString().some))
 
       /**
-        * Specifies the correlation between the probability of current packet duplicating
-        * and the previous time's packet duplicating. Should be 0..100
-        *
-        */
+       * Specifies the correlation between the probability of current packet duplicating and the
+       * previous time's packet duplicating. Should be 0..100
+       */
       def withCorrelation(correlation: Int) =
         updateRules(_.copy(correlation = correlation.toString().some))
 
@@ -344,14 +331,14 @@ object Action {
     }
 
     /**
-      * Indicates packet duplicate rules
-      *
-      * @param duplicate - Indicates the probability of packet duplicating 0..100
-      * @param correlation - Indicates the correlation between the probability 
-      * of current packet duplicating and the previous time's packet duplicating 0..100
-      */
+     * Indicates packet duplicate rules
+     *
+     * @param duplicate - Indicates the probability of packet duplicating 0..100
+     * @param correlation - Indicates the correlation between the probability
+     * of current packet duplicating and the previous time's packet duplicating 0..100
+     */
     final case class PacketDuplicateRules private[spec] (
-      duplicate:   Option[String],
+      duplicate: Option[String],
       correlation: Option[String],
     )
 
@@ -362,115 +349,103 @@ object Action {
   object IoChaos {
 
     /**
-      * Simulating delays file system calls
-      * 
-      * @param delay - Specific delay time
-      */
+     * Simulating delays file system calls
+     *
+     * @param delay - Specific delay time
+     */
     final case class Latency(
       delay: FiniteDuration,
     ) extends IoChaos
 
     /**
-      * Filesystem calls returns an error
-      *
-      * @param errno - Returned error number
-      * see https://chaos-mesh.org/docs/simulate-io-chaos-on-kubernetes/#appendix-b-common-error-numbers
-      */
+     * Filesystem calls returns an error
+     *
+     * @param errno - Returned error number
+     * see https://chaos-mesh.org/docs/simulate-io-chaos-on-kubernetes/#appendix-b-common-error-numbers
+     */
     final case class Fault(
       errno: Int,
     ) extends IoChaos
 
     /**
-      * Modifies file properties
-      *
-      * @param attr - Specific property override rules
-      */
+     * Modifies file properties
+     *
+     * @param attr - Specific property override rules
+     */
     final case class AttrOverride private[chaosmesh] (
       attr: AttrOverrideRules,
     ) extends IoChaos {
 
       /**
-        * Specifies Inode number overriding rule
-        *
-        */
+       * Specifies Inode number overriding rule
+       */
       def withOverrideIno(ino: Int) =
         updateRules(_.copy(ino = ino.some))
 
       /**
-        * Specifies file size overriding rule
-        *
-        */
+       * Specifies file size overriding rule
+       */
       def withOverrideSize(size: Int) =
         updateRules(_.copy(size = size.some))
 
       /**
-        * Specifies overriding rule for number of block the file uses
-        *
-        */
+       * Specifies overriding rule for number of block the file uses
+       */
       def withOverrideBlocksNumber(number: Int) =
         updateRules(_.copy(blocks = number.some))
 
       /**
-        * Specifies overriding rule for last access time of file in nanoseconds
-        *
-        */
+       * Specifies overriding rule for last access time of file in nanoseconds
+       */
       def withLastAccessTimeNano(nanos: Long) =
         updateRules(_.atimeUpdate(_.copy(nsec = nanos.some)))
 
       /**
-        * Specifies overriding rule for last modified time of file in nanoseconds
-        *
-        */
+       * Specifies overriding rule for last modified time of file in nanoseconds
+       */
       def withLastModifiedTimeNano(nanos: Long) =
         updateRules(_.mtimeUpdate(_.copy(nsec = nanos.some)))
 
       /**
-        * Specifies overriding rule for last status change time of file in nanoseconds
-        *
-        */
+       * Specifies overriding rule for last status change time of file in nanoseconds
+       */
       def withLastStatusChangeTimeNano(nanos: Long) =
         updateRules(_.ctimeUpdate(_.copy(nsec = nanos.some)))
 
       /**
-        * Specifies overriding rule for file kind
-        * see https://docs.rs/fuser/0.7.0/fuser/enum.FileType.html
-        *
-        */
+       * Specifies overriding rule for file kind see
+       * https://docs.rs/fuser/0.7.0/fuser/enum.FileType.html
+       */
       def withKind(kind: String) =
         updateRules(_.copy(kind = kind.some))
 
       /**
-        * Specifies overriding rule for file permissions in decimal
-        *
-        */
+       * Specifies overriding rule for file permissions in decimal
+       */
       def withPermission(permission: Int) =
         updateRules(_.copy(perm = permission.some))
 
       /**
-        * Specifies overriding rule for number of hard links
-        *
-        */
+       * Specifies overriding rule for number of hard links
+       */
       def withNumberOfHardLinks(num: Int) =
         updateRules(_.copy(nlink = num.some))
 
       /**
-        * Specifies overriding rule for owner ID
-        *
-        */
+       * Specifies overriding rule for owner ID
+       */
       def withOwnerId(id: Int) =
         updateRules(_.copy(uid = id.some))
 
       /**
-        * Specifies overriding rule for group ID
-        *
-        */
+       * Specifies overriding rule for group ID
+       */
       def withGroupId(id: Int) =
         updateRules(_.copy(gid = id.some))
 
       /**
-        * Specifies overriding rule for device ID
-        *
-        */
+       * Specifies overriding rule for device ID
+       */
       def withDeviceId(id: Int) =
         updateRules(_.copy(rdev = id.some))
 
@@ -483,34 +458,34 @@ object Action {
     }
 
     /**
-      * Contains file properties override rules
-      * 
-      * @param ino - ino number
-      * @param size - File size
-      * @param blocks - Number of blocks that the file uses
-      * @param atime - Last access time
-      * @param mtime - Last modified time
-      * @param ctime - Last status change time
-      * @param kind - File type, see https://docs.rs/fuser/0.7.0/fuser/enum.FileType.html
-      * @param perm - File permissions in decimal
-      * @param nlink - Number of hard links
-      * @param uid - User ID of the owner
-      * @param gid - Group ID of the owner
-      * @param rdev - Device ID
-      */
+     * Contains file properties override rules
+     *
+     * @param ino - ino number
+     * @param size - File size
+     * @param blocks - Number of blocks that the file uses
+     * @param atime - Last access time
+     * @param mtime - Last modified time
+     * @param ctime - Last status change time
+     * @param kind - File type, see https://docs.rs/fuser/0.7.0/fuser/enum.FileType.html
+     * @param perm - File permissions in decimal
+     * @param nlink - Number of hard links
+     * @param uid - User ID of the owner
+     * @param gid - Group ID of the owner
+     * @param rdev - Device ID
+     */
     final case class AttrOverrideRules private[spec] (
-      ino:    Option[Int],
-      size:   Option[Int],
+      ino: Option[Int],
+      size: Option[Int],
       blocks: Option[Int],
-      atime:  Option[TimeSpec],
-      mtime:  Option[TimeSpec],
-      ctime:  Option[TimeSpec],
-      kind:   Option[String],
-      perm:   Option[Int],
-      nlink:  Option[Int],
-      uid:    Option[Int],
-      gid:    Option[Int],
-      rdev:   Option[Int],
+      atime: Option[TimeSpec],
+      mtime: Option[TimeSpec],
+      ctime: Option[TimeSpec],
+      kind: Option[String],
+      perm: Option[Int],
+      nlink: Option[Int],
+      uid: Option[Int],
+      gid: Option[Int],
+      rdev: Option[Int],
     ) {
       private[spec] def atimeUpdate(f: TimeSpec => TimeSpec) = {
         val updated = atime.fold(TimeSpec(None, None))(f)
@@ -544,22 +519,22 @@ object Action {
     }
 
     /**
-      * Contains time data for file properties override
-      * 
-      * @param sec - timestamp in seconds
-      * @param nsec - timestamp in nanoseconds
-      * For the specific meaning of parameters, you can refer to man stat
-      */
+     * Contains time data for file properties override
+     *
+     * @param sec - timestamp in seconds
+     * @param nsec - timestamp in nanoseconds
+     * For the specific meaning of parameters, you can refer to man stat
+     */
     final case class TimeSpec private[spec] (
-      sec:  Option[Long],
+      sec: Option[Long],
       nsec: Option[Long],
     )
 
     /**
-      * Makes the file read or write a wrong value
-      * 
-      * @param mistake - Specific error rules
-      */
+     * Makes the file read or write a wrong value
+     *
+     * @param mistake - Specific error rules
+     */
     final case class Mistake private[chaosmesh] (
       mistake: MistakeRules,
     ) extends IoChaos
@@ -567,31 +542,31 @@ object Action {
     object Mistake {
 
       /**
-        * Specifies read or write mistake faults 
-        *
-        * @param filling - Specifies wrong data to be filled
-        * @param maxOccurrences - Specifies maximum number of errors in each operation
-        * @param maxLength - Specifies maximum length of each error (in bytes)
-        */
+       * Specifies read or write mistake faults
+       *
+       * @param filling - Specifies wrong data to be filled
+       * @param maxOccurrences - Specifies maximum number of errors in each operation
+       * @param maxLength - Specifies maximum length of each error (in bytes)
+       */
       def apply(
-        filling:        MistakeFillings,
+        filling: MistakeFillings,
         maxOccurrences: Int,
-        maxLength:      Int,
+        maxLength: Int,
       ): Mistake = Mistake(MistakeRules(filling, maxOccurrences, maxLength))
 
     }
 
     /**
-      * Indicates read or write mistake rules
-      * 
-      * @param filling - The wrong data to be filled. Only zero (fill 0) or random (fill random bytes) are supported
-      * @param maxOccurrences - Maximum number of errors in each operation
-      * @param maxLength - Maximum length of each error (in bytes)
-      */
+     * Indicates read or write mistake rules
+     *
+     * @param filling - The wrong data to be filled. Only zero (fill 0) or random (fill random bytes) are supported
+     * @param maxOccurrences - Maximum number of errors in each operation
+     * @param maxLength - Maximum length of each error (in bytes)
+     */
     final case class MistakeRules private[spec] (
-      filling:        MistakeFillings,
+      filling: MistakeFillings,
       maxOccurrences: Int,
-      maxLength:      Int,
+      maxLength: Int,
     )
 
     sealed trait MistakeFillings
@@ -599,13 +574,13 @@ object Action {
     object MistakeFillings {
 
       /**
-        * All file read or write mistakes will be filled with zeros
-        */
+       * All file read or write mistakes will be filled with zeros
+       */
       case object Zeros extends MistakeFillings
 
       /**
-        * All file read or write mistakes will be filled with random values
-        */
+       * All file read or write mistakes will be filled with random values
+       */
       case object Random extends MistakeFillings
     }
   }
@@ -615,13 +590,13 @@ object Action {
   object DnsChaos {
 
     /**
-      * DNS service returns a random IP address
-      */
+     * DNS service returns a random IP address
+     */
     object Random extends DnsChaos
 
     /**
-      * DNS service returns an error
-      */
+     * DNS service returns an error
+     */
     object Error extends DnsChaos
 
   }
@@ -631,80 +606,80 @@ object Action {
   object JvmChaos {
 
     /**
-      * Increase method latency
-      *
-      * @param class - The name of the Java class
-      * @param method - The name of the method
-      * @param latency - The duration of increasing method latency in milliseconds
-      */
+     * Increase method latency
+     *
+     * @param class - The name of the Java class
+     * @param method - The name of the method
+     * @param latency - The duration of increasing method latency in milliseconds
+     */
     final case class Latency(
       `class`: String,
-      method:  String,
+      method: String,
       latency: Int,
     ) extends JvmChaos
 
     /**
-      * Modify return values of a method
-      *
-      * @param class - The name of the Java class
-      * @param method - The name of the method
-      * @param value - Specifies the return value of the method.
-      * Currently, the item can be numeric and string types.
-      * If the item (return value) is string, double quotes are required, like "chaos".
-      */
+     * Modify return values of a method
+     *
+     * @param class - The name of the Java class
+     * @param method - The name of the method
+     * @param value - Specifies the return value of the method.
+     * Currently, the item can be numeric and string types.
+     * If the item (return value) is string, double quotes are required, like "chaos".
+     */
     final case class Return(
       `class`: String,
-      method:  String,
-      value:   String,
+      method: String,
+      value: String,
     ) extends JvmChaos
 
     /**
-      * Throw custom exceptions
-      *
-      * @param class - The name of the Java class
-      * @param method - The name of the method
-      * @param exception - The thrown custom exception, such as 'java.io.IOException("BOOM")'
-      */
+     * Throw custom exceptions
+     *
+     * @param class - The name of the Java class
+     * @param method - The name of the method
+     * @param exception - The thrown custom exception, such as 'java.io.IOException("BOOM")'
+     */
     final case class Exception(
-      `class`:   String,
-      method:    String,
+      `class`: String,
+      method: String,
       exception: String,
     ) extends JvmChaos
 
     sealed trait Stress extends JvmChaos
 
     /**
-      * Increase CPU usage of Java process
-      *
-      * @param cpuCount - The number of CPU cores used for increasing CPU stress
-      */
+     * Increase CPU usage of Java process
+     *
+     * @param cpuCount - The number of CPU cores used for increasing CPU stress
+     */
     final case class CpuStress(
       cpuCount: Int,
     ) extends Stress
 
     /**
-      * Cause memory overflow (support heap overflow and stack overflow)
-      *
-      * @param memType - stack or heap
-      */
+     * Cause memory overflow (support heap overflow and stack overflow)
+     *
+     * @param memType - stack or heap
+     */
     final case class MemOverflow(
       memType: String,
     ) extends Stress
 
     /**
-      * Trigger garbage collection
-      */
+     * Trigger garbage collection
+     */
     object GC extends JvmChaos
 
     /**
-      * Trigger faults by setting Byteman configuration files
-      *
-      * @param ruleData - Specifies the Byteman configuration data.
-      * see https://downloads.jboss.org/byteman/4.0.16/byteman-programmers-guide.html#the-byteman-rule-language
-      * You need to escape the line breaks in the configuration file to the newline character "\n",
-      * and use the escaped text as the value of "rule-data" as follows:
-      * \nRULE modify return value\nCLASS Main\nMETHOD getnum\nAT ENTRY\nIF true\nDO return 9999\nENDRULE\n"
-      */
+     * Trigger faults by setting Byteman configuration files
+     *
+     * @param ruleData - Specifies the Byteman configuration data.
+     * see https://downloads.jboss.org/byteman/4.0.16/byteman-programmers-guide.html#the-byteman-rule-language
+     * You need to escape the line breaks in the configuration file to the newline character "\n",
+     * and use the escaped text as the value of "rule-data" as follows:
+     * \nRULE modify return value\nCLASS Main\nMETHOD getnum\nAT ENTRY\nIF true\nDO return 9999\nENDRULE\n"
+     */
     final case class RuleData(
       ruleData: String,
     ) extends JvmChaos
@@ -715,23 +690,23 @@ object Action {
   object AwsChaos {
 
     /**
-      * Stops the specified EC2 instance
-      */
+     * Stops the specified EC2 instance
+     */
     object EC2Stop extends AwsChaos
 
     /**
-      * Restarts the specified EC2 instance
-      */
+     * Restarts the specified EC2 instance
+     */
     object EC2Restart extends AwsChaos
 
     /**
-      * Uninstalls the storage volume from the specified EC2 instance
-      *
-      * @param volumeID - This field specifies the EBS volume ID
-      * @param deviceName - This field specifies the machine name
-      */
+     * Uninstalls the storage volume from the specified EC2 instance
+     *
+     * @param volumeID - This field specifies the EBS volume ID
+     * @param deviceName - This field specifies the machine name
+     */
     final case class DetainVolume(
-      volumeID:   String,
+      volumeID: String,
       deviceName: String,
     ) extends AwsChaos
   }

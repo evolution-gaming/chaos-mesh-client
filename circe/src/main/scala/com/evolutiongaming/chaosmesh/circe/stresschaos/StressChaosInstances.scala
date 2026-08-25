@@ -11,11 +11,11 @@ import io.circe.generic.semiauto._
 import io.circe.syntax._
 
 trait StressChaosInstances
-    extends ModeInstances
-    with SelectorsInstances
-    with OptionalInfDurationInstances
-    with ExperimentKindInstances
-    with ResourceMetadataInstances {
+extends ModeInstances
+with SelectorsInstances
+with OptionalInfDurationInstances
+with ExperimentKindInstances
+with ResourceMetadataInstances {
 
   implicit val cpuStressorEnc: Encoder[StressChaos.CpuStressor] = deriveEncoder
 

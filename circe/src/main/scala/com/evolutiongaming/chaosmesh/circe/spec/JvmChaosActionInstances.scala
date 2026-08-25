@@ -34,7 +34,7 @@ trait JvmChaosActionInstances extends DurationInstances {
 
   implicit val jvmStressEnc: Encoder.AsObject[JvmChaos.Stress] = Encoder.AsObject.instance {
     case mem: JvmChaos.MemOverflow => mem.asJsonObject
-    case cpu: JvmChaos.CpuStress   => cpu.asJsonObject
+    case cpu: JvmChaos.CpuStress => cpu.asJsonObject
   }
 
   implicit val jvmStressDec: Decoder[JvmChaos.Stress] =
@@ -65,13 +65,13 @@ trait JvmChaosActionInstances extends DurationInstances {
       for {
         actionType <- c.get[String](ActionsEncoding.ActionFieldKey)
         result <- actionType match {
-          case "latency"   => c.as[JvmChaos.Latency]
-          case "return"    => c.as[JvmChaos.Return]
+          case "latency" => c.as[JvmChaos.Latency]
+          case "return" => c.as[JvmChaos.Return]
           case "exception" => c.as[JvmChaos.Exception]
-          case "stress"    => c.as[JvmChaos.Stress]
-          case "gc"        => JvmChaos.GC.asRight
-          case "ruleData"  => c.as[JvmChaos.RuleData]
-          case other       => DecodingFailure(s"Unknown pod chaos action $other", c.history).asLeft
+          case "stress" => c.as[JvmChaos.Stress]
+          case "gc" => JvmChaos.GC.asRight
+          case "ruleData" => c.as[JvmChaos.RuleData]
+          case other => DecodingFailure(s"Unknown pod chaos action $other", c.history).asLeft
         }
       } yield result
     }

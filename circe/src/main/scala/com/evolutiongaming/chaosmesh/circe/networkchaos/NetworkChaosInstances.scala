@@ -2,6 +2,7 @@ package com.evolutiongaming.chaosmesh.circe.networkchaos
 
 import cats.syntax.all._
 import com.evolutiongaming.chaosmesh.circe.common.CirceOps._
+import com.evolutiongaming.chaosmesh.circe.common.OptionalInfDurationInstances
 import com.evolutiongaming.chaosmesh.circe.k8s._
 import com.evolutiongaming.chaosmesh.circe.spec._
 import com.evolutiongaming.chaosmesh.model.k8s.ExperimentKind
@@ -10,15 +11,14 @@ import com.evolutiongaming.chaosmesh.model.spec.Direction
 import io.circe._
 import io.circe.generic.semiauto._
 import io.circe.syntax._
-import com.evolutiongaming.chaosmesh.circe.common.OptionalInfDurationInstances
 
 trait NetworkChaosInstances
-    extends NetworkChaosActionInstances
-    with ModeInstances
-    with SelectorsInstances
-    with ExperimentKindInstances
-    with ResourceMetadataInstances
-    with OptionalInfDurationInstances {
+extends NetworkChaosActionInstances
+with ModeInstances
+with SelectorsInstances
+with ExperimentKindInstances
+with ResourceMetadataInstances
+with OptionalInfDurationInstances {
 
   protected val DirectionField = "direction"
 
@@ -60,10 +60,10 @@ trait NetworkChaosInstances
       for {
         directionType <- c.get[String](DirectionField)
         result <- directionType match {
-          case "to"   => c.as[Direction.To]
+          case "to" => c.as[Direction.To]
           case "from" => c.as[Direction.From]
           case "both" => c.as[Direction.Both]
-          case other  => DecodingFailure(s"Unknown target type $other", c.history).asLeft
+          case other => DecodingFailure(s"Unknown target type $other", c.history).asLeft
         }
       } yield result
     }
@@ -76,8 +76,8 @@ trait NetworkChaosInstances
 
   implicit val netChaosSpecDec: Decoder[NetChaos.Spec] =
     for {
-      action    <- netChaosActionDec
-      mode      <- modeDec
+      action <- netChaosActionDec
+      mode <- modeDec
       direction <- directionDec
       decoder <- deriveDecoder[NetChaos.Spec]
         .prepare(_.replaceFieldValue(DirectionField, direction.asJson))

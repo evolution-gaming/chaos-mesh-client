@@ -1,16 +1,17 @@
 package com.evolutiongaming.chaosmesh.model.k8s
 
-import cats.syntax.all._
-import cats.data.NonEmptyList
 import cats.ApplicativeThrow
+import cats.data.NonEmptyList
+import cats.syntax.all._
+
 import scala.util.control.NoStackTrace
 
 /**
-  * see https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#resources-that-support-set-based-requirements
-  *
-  */
+ * see
+ * https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#resources-that-support-set-based-requirements
+ */
 final case class Expression(
-  key:      String,
+  key: String,
   operator: Expression.Operator,
 )
 
@@ -18,7 +19,7 @@ object Expression {
 
   sealed abstract class Operator(
     val operator: String,
-    val values:   Operator.Values,
+    val values: Operator.Values,
   )
 
   object Operator {
@@ -47,7 +48,7 @@ object Expression {
     }
 
     final case class DoesNotExist(doesNotExist: Option[NonEmptyList[String]])
-        extends Operator("DoesNotExist", doesNotExist)
+    extends Operator("DoesNotExist", doesNotExist)
 
     object DoesNotExist {
       def apply(values: String*): DoesNotExist =
@@ -64,7 +65,7 @@ object Expression {
           values
             .liftTo[F](UnknownExpressionType("NotIn operator must provide non empty values"))
             .map(NotIn(_))
-        case ("Exists", values)       => Exists(values).pure.widen
+        case ("Exists", values) => Exists(values).pure.widen
         case ("DoesNotExist", values) => DoesNotExist(values).pure.widen
 
         case (otherName, _) =>
@@ -73,7 +74,7 @@ object Expression {
   }
 
   final case class UnknownExpressionType(msg: String)
-      extends RuntimeException(msg)
-      with NoStackTrace
+  extends RuntimeException(msg)
+  with NoStackTrace
 
 }

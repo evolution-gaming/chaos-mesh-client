@@ -1,37 +1,35 @@
 package com.evolutiongaming.chaosmesh.circe.common
 
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeUnit.{DAYS, HOURS, MICROSECONDS, MILLISECONDS, MINUTES, NANOSECONDS, SECONDS}
-
+import DurationInstances._
 import cats.syntax.all._
 import cats.{ApplicativeThrow, MonadThrow}
 import io.circe._
 
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.{DAYS, HOURS, MICROSECONDS, MILLISECONDS, MINUTES, NANOSECONDS, SECONDS}
 import scala.annotation.tailrec
 import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.util.Try
 import scala.util.control.NoStackTrace
-
-import DurationInstances._
 private[circe] trait DurationInstances {
 
-  implicit private[circe] val durationEnc: Encoder[FiniteDuration] =
+  private[circe] implicit val durationEnc: Encoder[FiniteDuration] =
     Encoder.encodeString.contramap { d =>
       val coarsest = d.toCoarsest
-      s"${coarsest.length}${shortString(d.unit)}"
+      s"${ coarsest.length }${ shortString(d.unit) }"
     }
 
   private def shortString(unit: TimeUnit): String = unit match {
-    case MINUTES      => "m"
-    case NANOSECONDS  => "ns"
+    case MINUTES => "m"
+    case NANOSECONDS => "ns"
     case MILLISECONDS => "ms"
-    case DAYS         => "d"
-    case SECONDS      => "s"
-    case HOURS        => "h"
+    case DAYS => "d"
+    case SECONDS => "s"
+    case HOURS => "h"
     case MICROSECONDS => "µs"
   }
 
-  implicit private[circe] val durationDec: Decoder[FiniteDuration] =
+  private[circe] implicit val durationDec: Decoder[FiniteDuration] =
     Decoder.decodeString.emapTry { str =>
       if (str.startsWith("-")) parseStringAsDuration[Try](str.drop(1)).map(-_)
       else parseStringAsDuration[Try](str)
@@ -50,7 +48,7 @@ private object DurationInstances {
       if (s.isEmpty()) acc
       else
         timeRegex.findFirstIn(s) match {
-          case None        => List.empty
+          case None => List.empty
           case Some(found) => aux(s.drop(found.size), found :: acc)
         }
     aux(s, List.empty)
