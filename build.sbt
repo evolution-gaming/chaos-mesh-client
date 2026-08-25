@@ -12,8 +12,7 @@ inThisBuild(
     versionScheme := Some("semver-spec"),
     scalaVersion := crossScalaVersions.value.head,
     publishTo := Some(Resolver.evolutionReleases),
-    versionPolicyIntention := Compatibility.None,
-//    versionPolicyIntention := Compatibility.BinaryCompatible,
+    versionPolicyIntention := Compatibility.BinaryCompatible,
     scalacOptions ++= {
       CrossVersion.partialVersion(scalaVersion.value) match {
         case Some((3, _)) => Seq.empty
