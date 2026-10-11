@@ -89,5 +89,9 @@ lazy val `kubernetes-client` = project
     name := "chaos-mesh-client-kubernetes-client",
     libraryDependencies ++= Seq(
       K8s.KubernetesClient,
+      Http4s.Client,
+      BouncyCastle.Prov,
+      BouncyCastle.Pkix,
+      Jawn.Parser,
     ),
   )
